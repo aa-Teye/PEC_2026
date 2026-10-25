@@ -93,12 +93,23 @@ export default async function handler(req, res) {
       const code = ticketCode || `PEC-${Math.floor(100000 + Math.random() * 900000)}`;
       const attendanceDaysStr = Array.isArray(attendanceDays) ? attendanceDays.join(', ') : (attendanceDays || '');
 
-      // Check if the exact same attendee (same phone AND same name) is re-registering
-      const trimmedName = fullName.trim().toLowerCase();
+      // Normalize name (strip outer spaces, collapse inner spaces, lowercase)
+      const cleanName = fullName.trim().replace(/\s+/g, ' ');
+      const lowerName = cleanName.toLowerCase();
+
+      // Normalize phone number
+      const cleanPhone = String(phone).replace(/\s+/g, '').replace(/[-+()]/g, '');
+      const ghana1 = cleanPhone.startsWith('0') && cleanPhone.length === 10 ? '233' + cleanPhone.slice(1) : cleanPhone;
+      const ghana2 = cleanPhone.startsWith('233') ? '0' + cleanPhone.slice(3) : cleanPhone;
+
+      // Check if the entire name string already exists in the system
       const existing = await sql`
         SELECT * FROM pec_registrations
-        WHERE phone = ${phone}
-          AND LOWER(TRIM(full_name)) = ${trimmedName}
+        WHERE LOWER(TRIM(REGEXP_REPLACE(full_name, '\\s+', ' ', 'g'))) = ${lowerName}
+           OR (
+             phone IN (${phone}, ${cleanPhone}, ${ghana1}, ${ghana2})
+             AND LOWER(TRIM(REGEXP_REPLACE(full_name, '\\s+', ' ', 'g'))) = ${lowerName}
+           )
         LIMIT 1
       `;
 
@@ -107,10 +118,11 @@ export default async function handler(req, res) {
 
       if (existing && existing.length > 0) {
         isDuplicate = true;
-        // Update information for this existing attendee
+        // Update information for this existing attendee, updating phone to latest if provided
         const updated = await sql`
           UPDATE pec_registrations
-          SET title = ${title},
+          SET phone = ${phone},
+              title = COALESCE(NULLIF(${title}, ''), title),
               email = COALESCE(NULLIF(${email}, ''), email),
               gender = COALESCE(NULLIF(${gender}, ''), gender),
               member_status = COALESCE(NULLIF(${memberStatus}, ''), member_status),
@@ -128,7 +140,7 @@ export default async function handler(req, res) {
             member_status, first_timer, referral, attendance_days,
             attendance_mode, prayer_request, location, invited_by, needs_transport, sms_sent
           ) VALUES (
-            ${code}, ${title}, ${fullName}, ${phone}, ${email}, ${gender}, ${ageGroup},
+            ${code}, ${title}, ${cleanName}, ${phone}, ${email}, ${gender}, ${ageGroup},
             ${memberStatus}, ${firstTimer}, ${referral}, ${attendanceDaysStr},
             ${attendanceMode}, ${prayerRequest}, ${location}, ${invitedBy}, ${needsTransport}, FALSE
           )

@@ -214,6 +214,7 @@ export async function saveRegistration(regData) {
     if (res.ok) {
       const data = await res.json();
       record.synced = true;
+      record.isDuplicate = Boolean(data.isDuplicate);
       if (data.registration) {
         record.id = data.registration.id;
         record.ticketCode = data.registration.ticket_code || code;

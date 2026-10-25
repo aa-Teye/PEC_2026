@@ -115,13 +115,15 @@ export default function Register() {
         <div className="px-4 pt-6 pb-4 bg-gradient-to-b from-[#220409] to-[#0d0205] border-b border-amber-500/20 text-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">
             <CheckCircle2 size={13} />
-            <span>Registration Confirmed</span>
+            <span>{registeredAttendee.isDuplicate ? 'Registration Already Confirmed' : 'Registration Confirmed'}</span>
           </div>
           <h1 className="font-cinzel font-black text-2xl sm:text-3xl tracking-wide gold-gradient-text uppercase">
-            CONGRATULATIONS!
+            {registeredAttendee.isDuplicate ? 'WELCOME BACK!' : 'CONGRATULATIONS!'}
           </h1>
           <p className="text-xs text-stone-300 max-w-xs mx-auto mt-1">
-            You have successfully registered for PEC 2026.
+            {registeredAttendee.isDuplicate
+              ? 'You are already registered for PEC 2026. Your ticket reference has been re-sent via SMS.'
+              : 'You have successfully registered for PEC 2026.'}
           </p>
         </div>
 
