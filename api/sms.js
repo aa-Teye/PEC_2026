@@ -6,9 +6,11 @@ export async function sendRegistrationSms({ phone, fullName, ticketCode }) {
   if (!phone) return { success: false, error: "No phone number provided" };
 
   // Normalize recipient phone number for Ghana (0244... -> 233244...)
-  let recipient = String(phone).replace(/\s+/g, '').replace(/[-+]/g, '');
+  let recipient = String(phone).replace(/\s+/g, '').replace(/[-+()]/g, '');
   if (recipient.startsWith('0') && recipient.length === 10) {
     recipient = '233' + recipient.slice(1);
+  } else if (recipient.length === 9 && !recipient.startsWith('233')) {
+    recipient = '233' + recipient;
   }
 
   const message = `Dear ${fullName}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${ticketCode}. Dates: 23-29 Nov @ Overcomers Nation Church, Tesano. Info: 0546363957`;

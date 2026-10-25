@@ -93,67 +93,70 @@ export default async function handler(req, res) {
       const code = ticketCode || `PEC-${Math.floor(100000 + Math.random() * 900000)}`;
       const attendanceDaysStr = Array.isArray(attendanceDays) ? attendanceDays.join(', ') : (attendanceDays || '');
 
-      // Check for duplicate phone
+      // Check if registration already exists for this phone number
       const existing = await sql`
         SELECT * FROM pec_registrations WHERE phone = ${phone} LIMIT 1
       `;
 
-      if (existing && existing.length > 0) {
-        // Send SMS if not already sent
-        let smsResult = null;
-        if (!existing[0].sms_sent) {
-          smsResult = await sendRegistrationSms({
-            phone: existing[0].phone,
-            fullName: existing[0].full_name,
-            ticketCode: existing[0].ticket_code
-          });
-          if (smsResult.success) {
-            await sql`UPDATE pec_registrations SET sms_sent = TRUE WHERE id = ${existing[0].id}`;
-          }
-        }
+      let targetRecord = null;
+      let isDuplicate = false;
 
-        return res.status(200).json({
-          success: true,
-          message: 'Registration already exists for this phone number',
-          isDuplicate: true,
-          registration: existing[0],
-          smsResult
-        });
+      if (existing && existing.length > 0) {
+        isDuplicate = true;
+        // Update any updated information
+        const updated = await sql`
+          UPDATE pec_registrations
+          SET full_name = ${fullName},
+              title = ${title},
+              email = COALESCE(NULLIF(${email}, ''), email),
+              gender = COALESCE(NULLIF(${gender}, ''), gender),
+              member_status = COALESCE(NULLIF(${memberStatus}, ''), member_status),
+              attendance_days = ${attendanceDaysStr},
+              location = COALESCE(NULLIF(${location}, ''), location),
+              updated_at = CURRENT_TIMESTAMP
+          WHERE id = ${existing[0].id}
+          RETURNING *;
+        `;
+        targetRecord = updated[0] || existing[0];
+      } else {
+        const inserted = await sql`
+          INSERT INTO pec_registrations (
+            ticket_code, title, full_name, phone, email, gender, age_group,
+            member_status, first_timer, referral, attendance_days,
+            attendance_mode, prayer_request, location, invited_by, needs_transport, sms_sent
+          ) VALUES (
+            ${code}, ${title}, ${fullName}, ${phone}, ${email}, ${gender}, ${ageGroup},
+            ${memberStatus}, ${firstTimer}, ${referral}, ${attendanceDaysStr},
+            ${attendanceMode}, ${prayerRequest}, ${location}, ${invitedBy}, ${needsTransport}, FALSE
+          )
+          RETURNING *;
+        `;
+        targetRecord = inserted[0];
       }
 
-      const inserted = await sql`
-        INSERT INTO pec_registrations (
-          ticket_code, title, full_name, phone, email, gender, age_group,
-          member_status, first_timer, referral, attendance_days,
-          attendance_mode, prayer_request, location, invited_by, needs_transport, sms_sent
-        ) VALUES (
-          ${code}, ${title}, ${fullName}, ${phone}, ${email}, ${gender}, ${ageGroup},
-          ${memberStatus}, ${firstTimer}, ${referral}, ${attendanceDaysStr},
-          ${attendanceMode}, ${prayerRequest}, ${location}, ${invitedBy}, ${needsTransport}, FALSE
-        )
-        RETURNING *;
-      `;
-
-      // Dispatch SMS confirmation immediately via mNotify
+      // ALWAYS dispatch SMS confirmation to the attendee
       let smsResult = null;
       try {
+        const attendeeFullName = `${targetRecord.title ? targetRecord.title + ' ' : ''}${targetRecord.full_name}`;
         smsResult = await sendRegistrationSms({
-          phone,
-          fullName: `${title ? title + ' ' : ''}${fullName}`,
-          ticketCode: code
+          phone: targetRecord.phone,
+          fullName: attendeeFullName,
+          ticketCode: targetRecord.ticket_code
         });
-        if (smsResult.success) {
-          await sql`UPDATE pec_registrations SET sms_sent = TRUE WHERE id = ${inserted[0].id}`;
-          inserted[0].sms_sent = true;
+
+        if (smsResult && smsResult.success) {
+          await sql`UPDATE pec_registrations SET sms_sent = TRUE WHERE id = ${targetRecord.id}`;
+          targetRecord.sms_sent = true;
         }
       } catch (smsErr) {
         console.error('SMS notification error:', smsErr);
       }
 
-      return res.status(201).json({
+      return res.status(isDuplicate ? 200 : 201).json({
         success: true,
-        message: 'Registration recorded successfully in Neon DB',
-        registration: inserted[0],
+        message: isDuplicate ? 'Registration updated and confirmation SMS sent' : 'Registration recorded successfully in Neon DB',
+        isDuplicate,
+        registration: targetRecord,
         smsResult
       });
     }
