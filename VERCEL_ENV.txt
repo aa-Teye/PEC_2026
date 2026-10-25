@@ -3,9 +3,9 @@
 # Go to: Vercel Project > Settings > Environment Variables > Paste below values
 # ==============================================================================
 
-DATABASE_URL=postgresql://neondb_owner:npg_Ej8xzwg4LVRv@ep-shiny-moon-b2extv74-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL=postgresql://neondb_owner:npg_4fFsArdlg1ob@ep-frosty-art-b9nbr91y-pooler.c-7.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 
-NEON_DATABASE_URL=postgresql://neondb_owner:npg_Ej8xzwg4LVRv@ep-shiny-moon-b2extv74-pooler.c-6.eu-central-1.aws.neon.tech/neondb?sslmode=require
+NEON_DATABASE_URL=postgresql://neondb_owner:npg_4fFsArdlg1ob@ep-frosty-art-b9nbr91y-pooler.c-7.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 
 SMS_API_KEY=aHZxQXN6YnBvUHFHRU9XaUdvZnQ
 
