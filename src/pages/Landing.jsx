@@ -66,9 +66,9 @@ export default function Landing() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-28 left-1/2 -translate-x-1/2 w-64 h-64 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
 
-        {/* Top Church Tag */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-amber-500/30 text-amber-300 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
-          <span>Ebenezer Okronipa Ministries (EOM)</span>
+        {/* Top Tag */}
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
+          <span>PROPHETIC EAGLES CONVOCATION (PEC)</span>
         </div>
 
         {/* Poster / Artwork Preview */}
@@ -96,7 +96,7 @@ export default function Landing() {
           THIS SAME JESUS
         </h1>
         <p className="text-sm font-semibold text-amber-300 tracking-widest uppercase mb-2">
-          Acts 1:11 • {PROGRAM_DATA.name} 2026
+          Acts 1:11 • PROPHETIC EAGLES CONVOCATION (PEC 2026)
         </p>
         <p className="text-xs text-stone-300 max-w-sm mx-auto leading-relaxed mb-6">
           "This same Jesus, which is taken up from you into heaven, shall so come in like manner as ye have seen him go."

@@ -4,7 +4,7 @@ export const ATTENDANCE_KEY = 'PEC_ATTENDANCE_DATA';
 
 export const PROGRAM_DATA = {
   name: "PEC",
-  fullName: "PROPHETIC ENCOUNTER CONVENTION",
+  fullName: "PROPHETIC EAGLES CONVOCATION",
   theme: "THIS SAME JESUS",
   scripture: "Acts 1:11",
   scriptureText: "This same Jesus, which is taken up from you into heaven, shall so come in like manner as ye have seen him go into heaven.",
