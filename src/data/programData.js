@@ -241,27 +241,29 @@ export async function saveRegistration(regData) {
   return record;
 }
 
-// Client-side direct SMS dispatcher via mNotify
+// Client-side direct SMS dispatcher via Arkesel
 async function dispatchDirectSms(phone, name, code) {
   try {
     let recipient = String(phone).replace(/\s+/g, '').replace(/[-+]/g, '');
     if (recipient.startsWith('0') && recipient.length === 10) {
       recipient = '233' + recipient.slice(1);
     }
-    const message = `Dear ${name}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${code}. Dates: 23-29 Oct @ Overcomers Nation Church, Tesano. Enquiries: 0546363957`;
+    const message = `Dear ${name}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${code}. Dates: 23-29 Oct @ Overcomers Nation Church, Tesano. Info: 0546363957`;
 
-    await fetch('https://api.mnotify.com/api/sms/quick?key=aHZxQXN6YnBvUHFHRU9XaUdvZnQ', {
+    await fetch('https://sms.arkesel.com/api/v2/sms/send', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'api-key': 'aHZxQXN6YnBvUHFHRU9XaUdvZnQ',
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
-        "recipient[]": [recipient],
-        sender: "OVERCOMERS",
+        sender: 'OVERCOMERS',
         message: message,
-        is_schedule: false
+        recipients: [recipient]
       })
     });
   } catch (err) {
-    console.warn("Client SMS dispatch:", err.message);
+    console.warn('Client SMS dispatch:', err.message);
   }
 }
 

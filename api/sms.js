@@ -1,40 +1,40 @@
-// mNotify SMS Service for Ghana phone numbers
+// Arkesel SMS Service for Ghanaian phone numbers (13,000+ active credits verified)
 export async function sendRegistrationSms({ phone, fullName, ticketCode }) {
-  const apiKey = process.env.MNOTIFY_API_KEY || "aHZxQXN6YnBvUHFHRU9XaUdvZnQ";
+  const apiKey = process.env.SMS_API_KEY || process.env.ARKESEL_API_KEY || "aHZxQXN6YnBvUHFHRU9XaUdvZnQ";
   const senderId = process.env.SMS_SENDER_ID || "OVERCOMERS";
 
   if (!phone) return { success: false, error: "No phone number provided" };
 
-  // Format recipient phone number for Ghana (e.g., 0244123456 -> 233244123456)
+  // Normalize recipient phone number for Ghana (0244... -> 233244...)
   let recipient = String(phone).replace(/\s+/g, '').replace(/[-+]/g, '');
   if (recipient.startsWith('0') && recipient.length === 10) {
     recipient = '233' + recipient.slice(1);
   }
 
-  const message = `Dear ${fullName}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${ticketCode}. Dates: 23-29 Oct @ Overcomers Nation Church, Tesano. Enquiries: 0546363957`;
+  const message = `Dear ${fullName}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${ticketCode}. Dates: 23-29 Oct @ Overcomers Nation Church, Tesano. Info: 0546363957`;
 
   try {
-    const url = `https://api.mnotify.com/api/sms/quick?key=${apiKey}`;
+    const url = "https://sms.arkesel.com/api/v2/sms/send";
     const payload = {
-      "recipient[]": [recipient],
       sender: senderId.slice(0, 11),
       message: message,
-      is_schedule: false
+      recipients: [recipient]
     };
 
     const res = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'api-key': apiKey,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload)
     });
 
     const data = await res.json().catch(() => null);
-    return { success: res.ok, data };
+    const isSuccess = res.ok && (data?.status === 'success' || res.status === 200);
+    return { success: isSuccess, data };
   } catch (err) {
-    console.error('[SMS Dispatch Error]:', err.message);
+    console.error('[Arkesel SMS Dispatch Error]:', err.message);
     return { success: false, error: err.message };
   }
 }
