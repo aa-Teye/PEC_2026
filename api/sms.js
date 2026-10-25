@@ -13,7 +13,26 @@ export async function sendRegistrationSms({ phone, fullName, ticketCode }) {
     recipient = '233' + recipient;
   }
 
-  const message = `Dear ${fullName}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${ticketCode}. Dates: 23-29 Nov @ Overcomers Nation Church, Tesano. Info: 0546363957`;
+  // Option 2: Warm & Formal - Strictly clamped to <= 160 characters for 1 CREDIT
+  const staticSuffix = `, your PEC 2026 (THIS SAME JESUS) registration is confirmed! Ticket: ${ticketCode}. 23-29 Nov @ Overcomers, Tesano. Info: 0546363957`;
+  const maxNameLen = Math.max(10, 160 - ('Dear '.length + staticSuffix.length));
+  
+  let cleanName = String(fullName || '').trim().replace(/\s+/g, ' ');
+  let safeName = cleanName;
+  if (cleanName.length > maxNameLen) {
+    const parts = cleanName.split(' ');
+    if (parts.length > 2) {
+      const shortName = `${parts[0]} ${parts[parts.length - 1]}`;
+      safeName = shortName.length <= maxNameLen ? shortName : parts[0].slice(0, maxNameLen);
+    } else {
+      safeName = cleanName.slice(0, maxNameLen);
+    }
+  }
+
+  let message = `Dear ${safeName}${staticSuffix}`;
+  if (message.length > 160) {
+    message = message.slice(0, 160);
+  }
 
   try {
     const url = "https://sms.arkesel.com/api/v2/sms/send";
