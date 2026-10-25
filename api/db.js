@@ -2,8 +2,10 @@ import { neon } from '@neondatabase/serverless';
 
 let sqlClient = null;
 
+export const DEFAULT_DATABASE_URL = "postgresql://neondb_owner:npg_4fFsArdlg1ob@ep-frosty-art-b9nbr91y-pooler.c-7.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+
 export function getDb() {
-  const connectionString = process.env.DATABASE_URL || process.env.NEON_DATABASE_URL;
+  const connectionString = process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || DEFAULT_DATABASE_URL;
   if (!connectionString) {
     return null;
   }
