@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-deep:      #0b0204;
+  --bg-card:      #170508;
+  --bg-card-hover:#22080d;
+  --burgundy:     #800a18;
+  --crimson:      #b81427;
+  --gold:         #d4af37;
+  --gold-bright:  #fcd34d;
+  --gold-amber:   #f59e0b;
+  --gold-glow:    rgba(212, 175, 55, 0.35);
+  --white:        #ffffff;
+  --white-90:     rgba(255, 255, 255, 0.90);
+  --white-70:     rgba(255, 255, 255, 0.70);
+  --white-50:     rgba(255, 255, 255, 0.50);
+  --white-20:     rgba(255, 255, 255, 0.20);
+  --white-10:     rgba(255, 255, 255, 0.10);
+  --white-05:     rgba(255, 255, 255, 0.05);
+  --bottom-nav:   68px;
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #080103;
+    color: var(--white);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-bebas {
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+/* App container */
+#root {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: var(--bg-deep);
+  border-left: 1px solid rgba(212, 175, 55, 0.12);
+  border-right: 1px solid rgba(212, 175, 55, 0.12);
+  box-shadow: 0 0 100px rgba(184, 20, 39, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Admin & Attendance full-width override */
+body.full-width-page #root {
+  max-width: 100% !important;
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  background: #090204 !important;
+}
+
+/* Safe bottom spacing for navigation */
+.safe-bottom {
+  padding-bottom: calc(var(--bottom-nav) + env(safe-area-inset-bottom, 12px));
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: var(--bottom-nav);
+  background: rgba(12, 2, 4, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(212, 175, 55, 0.22);
+  border-left: 1px solid rgba(212, 175, 55, 0.12);
+  border-right: 1px solid rgba(212, 175, 55, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 100;
+  padding: 0 8px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  padding: 8px 4px;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.bottom-nav-item.active {
+  color: #fcd34d;
+}
+
+.bottom-nav-item.active .nav-icon {
+  transform: scale(1.12);
+  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.7));
+}
+
+/* Gold Gradient Text */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF6D1 0%, #F59E0B 45%, #D4AF37 75%, #926C15 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Crimson Glow */
+.crimson-glow {
+  box-shadow: 0 0 35px rgba(216, 27, 56, 0.45);
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0205;
+}
+::-webkit-scrollbar-thumb {
+  background: #460b14;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #800a18;
+}
