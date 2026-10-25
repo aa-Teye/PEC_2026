@@ -1,7 +1,7 @@
 // Arkesel SMS Service for Ghanaian phone numbers (13,000+ active credits verified)
 export async function sendRegistrationSms({ phone, fullName, ticketCode }) {
   const apiKey = process.env.SMS_API_KEY || process.env.ARKESEL_API_KEY || "aHZxQXN6YnBvUHFHRU9XaUdvZnQ";
-  const senderId = process.env.SMS_SENDER_ID || "OVERCOMERS";
+  const senderId = process.env.SMS_SENDER_ID || "EOM-PEC";
 
   if (!phone) return { success: false, error: "No phone number provided" };
 

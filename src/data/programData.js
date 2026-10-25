@@ -257,7 +257,7 @@ async function dispatchDirectSms(phone, name, code) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        sender: 'OVERCOMERS',
+        sender: 'EOM-PEC',
         message: message,
         recipients: [recipient]
       })
