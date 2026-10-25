@@ -6,7 +6,7 @@ import {
 import { DAYS_OF_CONVENTION, checkInAttendee } from '../data/programData';
 
 export default function Attendance() {
-  const [selectedDay, setSelectedDay] = useState(DAYS_OF_CONVENTION[0]?.id || 'Day 1: 23 Oct');
+  const [selectedDay, setSelectedDay] = useState(DAYS_OF_CONVENTION[0]?.id || 'Day 1: Mon 23 Nov');
   const [searchInput, setSearchInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);

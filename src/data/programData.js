@@ -10,9 +10,9 @@ export const PROGRAM_DATA = {
   scriptureText: "This same Jesus, which is taken up from you into heaven, shall so come in like manner as ye have seen him go into heaven.",
   tagline: "Experience the Miraculous, Healing and Transformative Power of Christ",
   subTheme: "The Lord who walked Galilee still heals, delivers, and establishes His people today.",
-  date: "23rd – 29th October",
-  datesFormatted: "23 - 29 OCTOBER",
-  time: "Mon - Thu: 6:00pm | Fri All Night: 8:00pm | Sun: 8:00am",
+  date: "23rd – 29th November",
+  datesFormatted: "23 - 29 NOVEMBER",
+  time: "Mon - Thu & Sat: 6:00pm | Fri All Night: 8:00pm | Sun Grand Finale: 8:00am",
   venue: "Overcomers Nation Church",
   venueSub: "Opposite Ayrton Drug, Tesano, Accra",
   dressCode: "Modest / Decent & Elegant",
@@ -48,23 +48,23 @@ export const PROGRAM_ACTIVITIES = [
   {
     id: 1,
     dayNumber: "Day 1",
-    dayLabel: "Day 1: Fri 23 Oct",
-    date: "Fri 23 Oct",
-    time: "8:00 PM",
-    sessionTitle: "Opening Night & ALL NIGHT VIGIL",
-    theme: "This Same Jesus: Night of Fire & Wonders",
-    category: "Prophetic All-Night Vigil",
+    dayLabel: "Day 1: Mon 23 Nov",
+    date: "Mon 23 Nov",
+    time: "6:00 PM",
+    sessionTitle: "Opening Night & Supernatural Launch",
+    theme: "This Same Jesus: The Healer is in the Room",
+    category: "Prophetic Opening Night",
     badgeColor: "from-red-600 to-rose-700",
-    description: "Launch into 7 days of glory! Explosive all-night vigil from 8:00 PM till dawn."
+    description: "Launch into 7 days of glory! Dynamic prophetic ministration, worship and the opening charge."
   },
   {
     id: 2,
     dayNumber: "Day 2",
-    dayLabel: "Day 2: Sat 24 Oct",
-    date: "Sat 24 Oct",
+    dayLabel: "Day 2: Tue 24 Nov",
+    date: "Tue 24 Nov",
     time: "6:00 PM",
     sessionTitle: "Signs, Wonders & Miracles",
-    theme: "The Healer is in the Room",
+    theme: "Creative Miracles & Instant Cures",
     category: "Miracles & Healing",
     badgeColor: "from-emerald-600 to-teal-700",
     description: "Instantaneous cures, creative miracles, and prophetic deliverance."
@@ -72,20 +72,8 @@ export const PROGRAM_ACTIVITIES = [
   {
     id: 3,
     dayNumber: "Day 3",
-    dayLabel: "Day 3: Sun 25 Oct",
-    date: "Sun 25 Oct",
-    time: "8:00 AM",
-    sessionTitle: "Sunday Super Encounter",
-    theme: "Dominion & Divine Establishment",
-    category: "Sunday Celebration",
-    badgeColor: "from-amber-500 to-amber-700",
-    description: "Glorious Sunday morning service of praise, apostolic teaching and empowerment."
-  },
-  {
-    id: 4,
-    dayNumber: "Day 4",
-    dayLabel: "Day 4: Mon 26 Oct",
-    date: "Mon 26 Oct",
+    dayLabel: "Day 3: Wed 25 Nov",
+    date: "Wed 25 Nov",
     time: "6:00 PM",
     sessionTitle: "Breaking Ancient Yokes",
     theme: "Deliverance from Generational Limitations",
@@ -94,10 +82,10 @@ export const PROGRAM_ACTIVITIES = [
     description: "Total liberation as Jesus breaks every chain and frees captive souls."
   },
   {
-    id: 5,
-    dayNumber: "Day 5",
-    dayLabel: "Day 5: Tue 27 Oct",
-    date: "Tue 27 Oct",
+    id: 4,
+    dayNumber: "Day 4",
+    dayLabel: "Day 4: Thu 26 Nov",
+    date: "Thu 26 Nov",
     time: "6:00 PM",
     sessionTitle: "Financial Dominion & Exploits",
     theme: "Supernatural Provision & Open Heavens",
@@ -106,23 +94,35 @@ export const PROGRAM_ACTIVITIES = [
     description: "Unlocking business breakthroughs, divine favor, and wealth transfers."
   },
   {
+    id: 5,
+    dayNumber: "Day 5",
+    dayLabel: "Day 5: Fri 27 Nov",
+    date: "Fri 27 Nov",
+    time: "8:00 PM",
+    sessionTitle: "Prophetic ALL NIGHT VIGIL",
+    theme: "Night of Fire, Mantles & Wonders",
+    category: "All-Night Vigil",
+    badgeColor: "from-rose-600 to-red-800",
+    description: "Explosive all-night vigil from 8:00 PM till dawn! Holy Ghost power, deliverance and prophetic impartation."
+  },
+  {
     id: 6,
     dayNumber: "Day 6",
-    dayLabel: "Day 6: Wed 28 Oct",
-    date: "Wed 28 Oct",
+    dayLabel: "Day 6: Sat 28 Nov",
+    date: "Sat 28 Nov",
     time: "6:00 PM",
     sessionTitle: "Family, Marriage & Restoration",
     theme: "Restoring Every Lost Glory",
     category: "Restoration & Anointing",
-    badgeColor: "from-rose-600 to-red-800",
+    badgeColor: "from-indigo-600 to-purple-800",
     description: "Supernatural healing for marriages, healing for children, and destiny restoration."
   },
   {
     id: 7,
     dayNumber: "Day 7",
-    dayLabel: "Day 7: Thu 29 Oct",
-    date: "Thu 29 Oct",
-    time: "6:00 PM",
+    dayLabel: "Day 7: Sun 29 Nov",
+    date: "Sun 29 Nov",
+    time: "8:00 AM",
     sessionTitle: "GRAND FINALE CELEBRATION",
     theme: "Supernatural Seal & Crown of Glory",
     category: "Grand Finale & Thanksgiving",
@@ -248,7 +248,7 @@ async function dispatchDirectSms(phone, name, code) {
     if (recipient.startsWith('0') && recipient.length === 10) {
       recipient = '233' + recipient.slice(1);
     }
-    const message = `Dear ${name}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${code}. Dates: 23-29 Oct @ Overcomers Nation Church, Tesano. Info: 0546363957`;
+    const message = `Dear ${name}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${code}. Dates: 23-29 Nov @ Overcomers Nation Church, Tesano. Info: 0546363957`;
 
     await fetch('https://sms.arkesel.com/api/v2/sms/send', {
       method: 'POST',

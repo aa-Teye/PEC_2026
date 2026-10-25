@@ -11,7 +11,7 @@ export async function sendRegistrationSms({ phone, fullName, ticketCode }) {
     recipient = '233' + recipient.slice(1);
   }
 
-  const message = `Dear ${fullName}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${ticketCode}. Dates: 23-29 Oct @ Overcomers Nation Church, Tesano. Info: 0546363957`;
+  const message = `Dear ${fullName}, your registration for PEC: THIS SAME JESUS (Acts 1:11) is confirmed! Ticket: ${ticketCode}. Dates: 23-29 Nov @ Overcomers Nation Church, Tesano. Info: 0546363957`;
 
   try {
     const url = "https://sms.arkesel.com/api/v2/sms/send";

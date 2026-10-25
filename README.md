@@ -3,7 +3,7 @@
 **Prophetic Encounter Convention 2026**  
 **Host:** Rev. Dr. Ebenezer Okronipa  
 **Church:** Overcomers Nation Church (Opp. Ayrton Drug, Tesano, Accra)  
-**Dates:** 23rd – 29th October  
+**Dates:** 23rd – 29th November  
 **Entry:** 100% Free  
 
 ---

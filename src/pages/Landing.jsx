@@ -12,16 +12,15 @@ export default function Landing() {
   const [sessionLabel, setSessionLabel] = useState('NEXT SERVICE COUNTDOWN');
 
   useEffect(() => {
-    // Exact session schedule for PEC 2026 (23 - 29 Oct 2026)
+    // Exact session schedule for PEC 2026 (23 - 29 Nov 2026)
     const sessions = [
-      new Date('2026-10-23T20:00:00'),
-      new Date('2026-10-24T18:00:00'),
-      new Date('2026-10-25T08:00:00'),
-      new Date('2026-10-25T18:00:00'),
-      new Date('2026-10-26T18:00:00'),
-      new Date('2026-10-27T18:00:00'),
-      new Date('2026-10-28T18:00:00'),
-      new Date('2026-10-29T18:00:00'),
+      new Date('2026-11-23T18:00:00'),
+      new Date('2026-11-24T18:00:00'),
+      new Date('2026-11-25T18:00:00'),
+      new Date('2026-11-26T18:00:00'),
+      new Date('2026-11-27T20:00:00'), // Fri All Night Vigil
+      new Date('2026-11-28T18:00:00'),
+      new Date('2026-11-29T08:00:00'), // Sun Grand Finale
     ];
 
     const now = Date.now();
@@ -29,12 +28,12 @@ export default function Landing() {
 
     if (!target) {
       // If before conference
-      if (now < new Date('2026-10-23T20:00:00').getTime()) {
-        target = new Date('2026-10-23T20:00:00');
+      if (now < new Date('2026-11-23T18:00:00').getTime()) {
+        target = new Date('2026-11-23T18:00:00');
         setSessionLabel('COUNTDOWN TO OPENING NIGHT');
       } else {
         // Fallback grand finale
-        target = new Date('2026-10-29T18:00:00');
+        target = new Date('2026-11-29T08:00:00');
         setSessionLabel('COUNTDOWN TO GRAND FINALE');
       }
     } else {
@@ -146,7 +145,7 @@ export default function Landing() {
             </div>
             <div>
               <p className="text-xs text-amber-300/80 font-bold uppercase tracking-wider">Conference Dates</p>
-              <p className="text-sm font-bold text-white">23rd – 29th October</p>
+              <p className="text-sm font-bold text-white">23rd – 29th November</p>
               <p className="text-xs text-stone-400">7 Days of Supernatural Glory & Encounters</p>
             </div>
           </div>

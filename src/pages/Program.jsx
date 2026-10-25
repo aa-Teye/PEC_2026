@@ -17,7 +17,7 @@ export default function Program() {
           PROGRAM & SCHEDULE
         </h1>
         <p className="text-xs text-stone-300 max-w-xs mx-auto mt-1">
-          23rd – 29th October • Overcomers Nation Church, Tesano
+          23rd – 29th November • Overcomers Nation Church, Tesano
         </p>
       </div>
 

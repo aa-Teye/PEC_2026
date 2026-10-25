@@ -40,7 +40,7 @@ export default function BadgeModal({ attendee, onClose }) {
       doc.text("THIS SAME JESUS", 42.5, 22, { align: 'center' });
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(8);
-      doc.text("ACTS 1:11 • 23 - 29 OCTOBER", 42.5, 28, { align: 'center' });
+      doc.text("ACTS 1:11 • 23 - 29 NOVEMBER", 42.5, 28, { align: 'center' });
 
       // Attendee Name Box
       doc.setFillColor(35, 8, 14);
@@ -84,7 +84,7 @@ export default function BadgeModal({ attendee, onClose }) {
   };
 
   const handleShare = () => {
-    const text = `🎉 I'm officially registered for PEC: THIS SAME JESUS (Acts 1:11) with Rev. Dr. Ebenezer Okronipa! 23-29 October at Overcomers Nation Church, Tesano.\nMy Ticket: ${ticketCode}\nRegister free here: ${window.location.origin}/register`;
+    const text = `🎉 I'm officially registered for PEC: THIS SAME JESUS (Acts 1:11) with Rev. Dr. Ebenezer Okronipa! 23-29 November at Overcomers Nation Church, Tesano.\nMy Ticket: ${ticketCode}\nRegister free here: ${window.location.origin}/register`;
     if (navigator.share) {
       navigator.share({
         title: 'PEC - THIS SAME JESUS Delegate Pass',
@@ -150,7 +150,7 @@ export default function BadgeModal({ attendee, onClose }) {
 
           <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-stone-400 px-2">
             <span className="flex items-center gap-1">
-              <Calendar size={12} className="text-amber-400" /> 23–29 Oct
+              <Calendar size={12} className="text-amber-400" /> 23–29 Nov
             </span>
             <span className="flex items-center gap-1">
               <MapPin size={12} className="text-amber-400" /> Tesano, Accra
