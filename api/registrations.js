@@ -93,9 +93,13 @@ export default async function handler(req, res) {
       const code = ticketCode || `PEC-${Math.floor(100000 + Math.random() * 900000)}`;
       const attendanceDaysStr = Array.isArray(attendanceDays) ? attendanceDays.join(', ') : (attendanceDays || '');
 
-      // Check if registration already exists for this phone number
+      // Check if the exact same attendee (same phone AND same name) is re-registering
+      const trimmedName = fullName.trim().toLowerCase();
       const existing = await sql`
-        SELECT * FROM pec_registrations WHERE phone = ${phone} LIMIT 1
+        SELECT * FROM pec_registrations
+        WHERE phone = ${phone}
+          AND LOWER(TRIM(full_name)) = ${trimmedName}
+        LIMIT 1
       `;
 
       let targetRecord = null;
@@ -103,11 +107,10 @@ export default async function handler(req, res) {
 
       if (existing && existing.length > 0) {
         isDuplicate = true;
-        // Update any updated information
+        // Update information for this existing attendee
         const updated = await sql`
           UPDATE pec_registrations
-          SET full_name = ${fullName},
-              title = ${title},
+          SET title = ${title},
               email = COALESCE(NULLIF(${email}, ''), email),
               gender = COALESCE(NULLIF(${gender}, ''), gender),
               member_status = COALESCE(NULLIF(${memberStatus}, ''), member_status),

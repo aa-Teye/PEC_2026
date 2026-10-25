@@ -12,40 +12,34 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'Database not configured' });
   }
 
-  const queryCode = req.query.code || req.body?.code;
-  const queryPhone = req.query.phone || req.body?.phone;
+  const searchParam = (req.query.query || req.query.code || req.query.phone || req.query.name || req.body?.query || req.body?.code || req.body?.phone || '').trim();
 
-  if (!queryCode && !queryPhone) {
-    return res.status(400).json({ error: 'Ticket code or phone parameter required' });
+  if (!searchParam) {
+    return res.status(400).json({ error: 'Search parameter required (ticket code, phone, or name)' });
   }
 
   try {
     await initDb();
 
-    let attendee;
-    if (queryCode) {
-      const rows = await sql`
-        SELECT * FROM pec_registrations
-        WHERE LOWER(ticket_code) = LOWER(${queryCode.trim()})
-        LIMIT 1
-      `;
-      attendee = rows[0];
-    } else {
-      const rows = await sql`
-        SELECT * FROM pec_registrations
-        WHERE phone = ${queryPhone.trim()}
-        LIMIT 1
-      `;
-      attendee = rows[0];
-    }
+    const q = `%${searchParam.toLowerCase()}%`;
+    const rows = await sql`
+      SELECT * FROM pec_registrations
+      WHERE LOWER(ticket_code) = LOWER(${searchParam})
+         OR phone = ${searchParam}
+         OR phone LIKE ${q}
+         OR LOWER(full_name) LIKE ${q}
+      ORDER BY created_at DESC
+      LIMIT 20
+    `;
 
-    if (!attendee) {
+    if (!rows || rows.length === 0) {
       return res.status(404).json({
         valid: false,
-        message: 'No attendee found for the provided code or phone.'
+        message: 'No attendee found for the provided code, phone, or name.'
       });
     }
 
+    const attendee = rows[0];
     const checkins = await sql`
       SELECT day_label, checkin_time, checkin_method
       FROM pec_attendance_logs
@@ -55,7 +49,9 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       valid: true,
+      total: rows.length,
       attendee,
+      attendees: rows,
       checkins
     });
   } catch (err) {

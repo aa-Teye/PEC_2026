@@ -55,19 +55,22 @@ export default async function handler(req, res) {
     // POST /api/attendance (Check-in attendee)
     if (req.method === 'POST') {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      const { ticketCode, phone, dayLabel = 'Day 1', checkinMethod = 'SCAN' } = body;
+      const { ticketCode, phone, fullName, dayLabel = 'Day 1', checkinMethod = 'SCAN' } = body;
 
-      if (!ticketCode && !phone) {
-        return res.status(400).json({ error: 'Ticket code or phone number is required' });
+      if (!ticketCode && !phone && !fullName) {
+        return res.status(400).json({ error: 'Ticket code, full name, or phone number is required' });
       }
 
       // Lookup attendee in registrations
       let attendee;
       if (ticketCode) {
-        const found = await sql`SELECT * FROM pec_registrations WHERE LOWER(ticket_code) = LOWER(${ticketCode}) LIMIT 1`;
+        const found = await sql`SELECT * FROM pec_registrations WHERE LOWER(ticket_code) = LOWER(${ticketCode.trim()}) LIMIT 1`;
+        attendee = found[0];
+      } else if (fullName) {
+        const found = await sql`SELECT * FROM pec_registrations WHERE LOWER(TRIM(full_name)) = LOWER(${fullName.trim()}) LIMIT 1`;
         attendee = found[0];
       } else {
-        const found = await sql`SELECT * FROM pec_registrations WHERE phone = ${phone} LIMIT 1`;
+        const found = await sql`SELECT * FROM pec_registrations WHERE phone = ${phone.trim()} LIMIT 1`;
         attendee = found[0];
       }
 
