@@ -48,87 +48,87 @@ export const PROGRAM_ACTIVITIES = [
   {
     id: 1,
     dayNumber: "Day 1",
-    dayLabel: "Day 1: 23 Oct",
-    date: "23 Oct",
-    time: "6:00 PM",
-    sessionTitle: "Opening Impartation Service",
-    theme: "This Same Jesus: The Resurrection & Life",
-    category: "Prophetic Word & Opening Encounter",
-    badgeColor: "from-amber-500 to-amber-700",
-    description: "Launch into 7 days of supernatural glory. Unveiling Christ in His power and sovereign might."
+    dayLabel: "Day 1: Fri 23 Oct",
+    date: "Fri 23 Oct",
+    time: "8:00 PM",
+    sessionTitle: "Opening Night & ALL NIGHT VIGIL",
+    theme: "This Same Jesus: Night of Fire & Wonders",
+    category: "Prophetic All-Night Vigil",
+    badgeColor: "from-red-600 to-rose-700",
+    description: "Launch into 7 days of glory! Explosive all-night vigil from 8:00 PM till dawn."
   },
   {
     id: 2,
     dayNumber: "Day 2",
-    dayLabel: "Day 2: 24 Oct",
-    date: "24 Oct",
+    dayLabel: "Day 2: Sat 24 Oct",
+    date: "Sat 24 Oct",
     time: "6:00 PM",
-    sessionTitle: "Divine Deliverance Night",
-    theme: "Breaking Ancient Yokes & Generational Chains",
-    category: "Deliverance & Breakthrough",
-    badgeColor: "from-red-600 to-rose-700",
-    description: "Experience total liberty as Jesus breaks every heavy burden and frees captive souls."
+    sessionTitle: "Signs, Wonders & Miracles",
+    theme: "The Healer is in the Room",
+    category: "Miracles & Healing",
+    badgeColor: "from-emerald-600 to-teal-700",
+    description: "Instantaneous cures, creative miracles, and prophetic deliverance."
   },
   {
     id: 3,
     dayNumber: "Day 3",
-    dayLabel: "Day 3: 25 Oct",
-    date: "25 Oct",
-    time: "6:00 PM",
-    sessionTitle: "Supernatural Healing & Miracles",
-    theme: "The Healer Is in the Room",
-    category: "Healing School & Signs",
-    badgeColor: "from-emerald-600 to-teal-700",
-    description: "Manifestation of miraculous healings, creative miracles, and instantaneous cures."
+    dayLabel: "Day 3: Sun 25 Oct",
+    date: "Sun 25 Oct",
+    time: "8:00 AM",
+    sessionTitle: "Sunday Super Encounter",
+    theme: "Dominion & Divine Establishment",
+    category: "Sunday Celebration",
+    badgeColor: "from-amber-500 to-amber-700",
+    description: "Glorious Sunday morning service of praise, apostolic teaching and empowerment."
   },
   {
     id: 4,
     dayNumber: "Day 4",
-    dayLabel: "Day 4: 26 Oct",
-    date: "26 Oct",
+    dayLabel: "Day 4: Mon 26 Oct",
+    date: "Mon 26 Oct",
     time: "6:00 PM",
-    sessionTitle: "Financial Dominion & Open Doors",
-    theme: "Supernatural Provision & Favor",
-    category: "Anointing & Prosperity",
-    badgeColor: "from-yellow-500 to-amber-600",
-    description: "Unlocking supernatural opportunities, wealth transfers, and debt cancellation."
+    sessionTitle: "Breaking Ancient Yokes",
+    theme: "Deliverance from Generational Limitations",
+    category: "Warfare & Deliverance",
+    badgeColor: "from-purple-600 to-indigo-700",
+    description: "Total liberation as Jesus breaks every chain and frees captive souls."
   },
   {
     id: 5,
     dayNumber: "Day 5",
-    dayLabel: "Day 5: 27 Oct",
-    date: "27 Oct",
-    time: "8:00 PM",
-    sessionTitle: "GREAT ALL-NIGHT VIGIL",
-    theme: "Night of Wonders & Fire of God",
-    category: "Prophetic All-Night",
-    badgeColor: "from-orange-600 to-red-700",
-    description: "Power-packed vigil from 8:00 PM till dawn! Fervent warfare, angelic encounters and fire impartation."
+    dayLabel: "Day 5: Tue 27 Oct",
+    date: "Tue 27 Oct",
+    time: "6:00 PM",
+    sessionTitle: "Financial Dominion & Exploits",
+    theme: "Supernatural Provision & Open Heavens",
+    category: "Anointing & Prosperity",
+    badgeColor: "from-yellow-500 to-amber-600",
+    description: "Unlocking business breakthroughs, divine favor, and wealth transfers."
   },
   {
     id: 6,
     dayNumber: "Day 6",
-    dayLabel: "Day 6: 28 Oct",
-    date: "28 Oct",
+    dayLabel: "Day 6: Wed 28 Oct",
+    date: "Wed 28 Oct",
     time: "6:00 PM",
-    sessionTitle: "Family, Destiny & Restoration",
-    theme: "Restoring the Years the Locust Has Eaten",
+    sessionTitle: "Family, Marriage & Restoration",
+    theme: "Restoring Every Lost Glory",
     category: "Restoration & Anointing",
-    badgeColor: "from-purple-600 to-indigo-700",
-    description: "Total recovery for families, marriages, businesses, and wounded spirits."
+    badgeColor: "from-rose-600 to-red-800",
+    description: "Supernatural healing for marriages, healing for children, and destiny restoration."
   },
   {
     id: 7,
     dayNumber: "Day 7",
-    dayLabel: "Day 7: 29 Oct",
-    date: "29 Oct",
-    time: "8:00 AM",
+    dayLabel: "Day 7: Thu 29 Oct",
+    date: "Thu 29 Oct",
+    time: "6:00 PM",
     sessionTitle: "GRAND FINALE CELEBRATION",
     theme: "Supernatural Seal & Crown of Glory",
     category: "Grand Finale & Thanksgiving",
     badgeColor: "from-amber-400 via-yellow-500 to-amber-700",
     finale: true,
-    description: "Glorious climax, special impartation oil service, prophetic mantle transmission and praise explosion."
+    description: "The climactic final service! Special mantle impartation, anointing oil release and thanksgiving."
   }
 ];
 
@@ -154,21 +154,21 @@ export const TITLES = [
 export const SOCIAL_LINKS = [
   {
     id: 1,
+    platform: "YouTube",
+    handle: "@overcomersnationchurch2041",
+    url: "https://www.youtube.com/@overcomersnationchurch2041",
+    color: "#FF0000",
+    badge: "Official Live Stream",
+    desc: "Watch all PEC 2026 services live and replay recordings"
+  },
+  {
+    id: 2,
     platform: "Facebook",
     handle: "Overcomers Nation",
     url: "https://www.facebook.com/EbenezerOkronipa",
     color: "#1877F2",
     badge: "Live Streams",
     desc: "Join our official Facebook page for live streaming & updates"
-  },
-  {
-    id: 2,
-    platform: "YouTube",
-    handle: "Overcomers nation church",
-    url: "https://youtube.com/@revdrebenezerokronipa",
-    color: "#FF0000",
-    badge: "HD Broadcasts",
-    desc: "Watch live broadcasts, sermons, and faith messages"
   },
   {
     id: 3,

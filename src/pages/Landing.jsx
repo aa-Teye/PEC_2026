@@ -9,11 +9,36 @@ import { PROGRAM_DATA, PROGRAM_ACTIVITIES } from '../data/programData';
 export default function Landing() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
+  const [sessionLabel, setSessionLabel] = useState('NEXT SERVICE COUNTDOWN');
+
   useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    let target = new Date(`${currentYear}-10-23T18:00:00`);
-    if (target.getTime() < Date.now()) {
-      target = new Date(`${currentYear + 1}-10-23T18:00:00`);
+    // Exact session schedule for PEC 2026 (23 - 29 Oct 2026)
+    const sessions = [
+      new Date('2026-10-23T20:00:00'),
+      new Date('2026-10-24T18:00:00'),
+      new Date('2026-10-25T08:00:00'),
+      new Date('2026-10-25T18:00:00'),
+      new Date('2026-10-26T18:00:00'),
+      new Date('2026-10-27T18:00:00'),
+      new Date('2026-10-28T18:00:00'),
+      new Date('2026-10-29T18:00:00'),
+    ];
+
+    const now = Date.now();
+    let target = sessions.find(s => s.getTime() > now);
+
+    if (!target) {
+      // If before conference
+      if (now < new Date('2026-10-23T20:00:00').getTime()) {
+        target = new Date('2026-10-23T20:00:00');
+        setSessionLabel('COUNTDOWN TO OPENING NIGHT');
+      } else {
+        // Fallback grand finale
+        target = new Date('2026-10-29T18:00:00');
+        setSessionLabel('COUNTDOWN TO GRAND FINALE');
+      }
+    } else {
+      setSessionLabel('COUNTDOWN TO NEXT SERVICE');
     }
 
     const interval = setInterval(() => {
@@ -25,6 +50,8 @@ export default function Landing() {
           minutes: Math.floor((diff / 1000 / 60) % 60),
           seconds: Math.floor((diff / 1000) % 60),
         });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
     }, 1000);
 
@@ -76,22 +103,27 @@ export default function Landing() {
         </p>
 
         {/* Countdown Timer */}
-        <div className="max-w-xs mx-auto grid grid-cols-4 gap-2 mb-6">
-          {[
-            { val: timeLeft.days, label: 'DAYS' },
-            { val: timeLeft.hours, label: 'HRS' },
-            { val: timeLeft.minutes, label: 'MIN' },
-            { val: timeLeft.seconds, label: 'SEC' }
-          ].map((item, idx) => (
-            <div key={idx} className="bg-black/40 border border-amber-500/20 rounded-xl py-2 px-1 text-center backdrop-blur-sm shadow-inner">
-              <span className="block font-mono font-black text-xl text-amber-300 leading-none">
-                {String(item.val).padStart(2, '0')}
-              </span>
-              <span className="text-[9px] font-bold text-stone-400 tracking-wider">
-                {item.label}
-              </span>
-            </div>
-          ))}
+        <div className="max-w-xs mx-auto mb-6">
+          <p className="text-[10px] text-amber-300 font-extrabold uppercase tracking-wider mb-2">
+            🔥 {sessionLabel}
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { val: timeLeft.days, label: 'DAYS' },
+              { val: timeLeft.hours, label: 'HRS' },
+              { val: timeLeft.minutes, label: 'MIN' },
+              { val: timeLeft.seconds, label: 'SEC' }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-black/40 border border-amber-500/20 rounded-xl py-2 px-1 text-center backdrop-blur-sm shadow-inner">
+                <span className="block font-mono font-black text-xl text-amber-300 leading-none">
+                  {String(item.val).padStart(2, '0')}
+                </span>
+                <span className="text-[9px] font-bold text-stone-400 tracking-wider">
+                  {item.label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Hero CTA Button */}
