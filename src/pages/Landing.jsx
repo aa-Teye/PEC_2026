@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Calendar, Clock, MapPin, ChevronRight,
-  Shield, Flame, Users, HeartHandshake, Phone, Share2
+  Shield, Flame, Users, HeartHandshake, Phone, Share2, CheckCircle2
 } from 'lucide-react';
 import { PROGRAM_DATA, PROGRAM_ACTIVITIES } from '../data/programData';
 
@@ -252,18 +252,18 @@ export default function Landing() {
       {/* Registration Banner */}
       <div className="px-4 py-8">
         <div className="bg-gradient-to-r from-red-950 via-[#26050b] to-[#1a0408] border-2 border-amber-500/30 rounded-2xl p-6 text-center shadow-xl">
-          <Shield size={32} className="mx-auto text-amber-400 mb-2" />
+          <CheckCircle2 size={32} className="mx-auto text-amber-400 mb-2" />
           <h3 className="font-cinzel font-black text-xl text-white mb-1">
-            Reserve Your Free Seat
+            Confirm Your Registration
           </h3>
           <p className="text-xs text-stone-300 mb-4 max-w-xs mx-auto">
-            Get your instant digital pass, QR code check-in, and seat reservation with instant SMS confirmation.
+            Reserve your seat and receive an instant SMS confirmation for PEC 2026.
           </p>
           <Link
             to="/register"
             className="inline-block py-3 px-8 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-extrabold text-xs tracking-wider shadow-lg shadow-amber-500/30 active:scale-95 transition-all"
           >
-            REGISTER NOW
+            CONFIRM YOUR REGISTRATION
           </Link>
         </div>
       </div>

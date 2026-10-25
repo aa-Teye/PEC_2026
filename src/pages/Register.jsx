@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import {
   User, Phone, Mail, MapPin, Calendar, Heart, Shield,
   CheckCircle2, ArrowRight, Loader2, Car, Users, MessageSquare
 } from 'lucide-react';
 import { PROGRAM_DATA, DAYS_OF_CONVENTION, TITLES, saveRegistration } from '../data/programData';
-import BadgeModal from '../components/BadgeModal';
 
 const INIT_FORM = {
   title: 'Mr',
@@ -26,12 +25,11 @@ const INIT_FORM = {
 };
 
 export default function Register() {
-  const navigate = useNavigate();
   const [form, setForm] = useState(INIT_FORM);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [registeredAttendee, setRegisteredAttendee] = useState(null);
-  const [showBadge, setShowBadge] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const toggleDay = (dayId) => {
     setForm(prev => {
@@ -69,16 +67,30 @@ export default function Register() {
     try {
       const saved = await saveRegistration(form);
       setRegisteredAttendee(saved);
+      setIsSubmitted(true);
 
+      // Festive celebratory bubbles / confetti
       try {
         confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 }
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.5 }
         });
+        setTimeout(() => {
+          confetti({
+            particleCount: 70,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 }
+          });
+          confetti({
+            particleCount: 70,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 }
+          });
+        }, 200);
       } catch {}
-
-      setShowBadge(true);
     } catch (err) {
       alert("Registration error: " + err.message);
     } finally {
@@ -86,6 +98,117 @@ export default function Register() {
     }
   };
 
+  const handleRegisterAnother = () => {
+    setForm(INIT_FORM);
+    setRegisteredAttendee(null);
+    setIsSubmitted(false);
+    setErrors({});
+  };
+
+  // -------------------------------------------------------------
+  // Congratulations Screen (After successful registration)
+  // -------------------------------------------------------------
+  if (isSubmitted && registeredAttendee) {
+    return (
+      <div className="flex-1 pb-24 text-white">
+        {/* Header Banner */}
+        <div className="px-4 pt-6 pb-4 bg-gradient-to-b from-[#220409] to-[#0d0205] border-b border-amber-500/20 text-center">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-2">
+            <CheckCircle2 size={13} />
+            <span>Registration Confirmed</span>
+          </div>
+          <h1 className="font-cinzel font-black text-2xl sm:text-3xl tracking-wide gold-gradient-text uppercase">
+            CONGRATULATIONS!
+          </h1>
+          <p className="text-xs text-stone-300 max-w-xs mx-auto mt-1">
+            You have successfully registered for PEC 2026.
+          </p>
+        </div>
+
+        {/* Celebration Body */}
+        <div className="px-4 py-8 max-w-md mx-auto text-center space-y-6 animate-fadeIn">
+          {/* Glowing Checkmark */}
+          <div className="relative mx-auto w-20 h-20">
+            <div className="absolute inset-0 rounded-full bg-amber-500/20 blur-xl animate-pulse" />
+            <div className="relative w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-black shadow-2xl shadow-amber-500/50">
+              <CheckCircle2 size={42} className="stroke-[2.5]" />
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-white mb-1">
+              Welcome, {registeredAttendee.title ? `${registeredAttendee.title} ` : ''}{registeredAttendee.fullName || registeredAttendee.full_name}!
+            </h2>
+            <p className="text-xs text-amber-300 font-semibold tracking-wide">
+              PEC: THIS SAME JESUS (Acts 1:11)
+            </p>
+            <p className="text-[11px] text-stone-400 mt-1">
+              23rd – 29th November 2026 • Overcomers Nation Church, Tesano
+            </p>
+          </div>
+
+          {/* Details Card */}
+          <div className="bg-[#150407] border border-amber-500/25 rounded-2xl p-5 text-left space-y-3.5 shadow-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div>
+                <span className="text-[10px] uppercase text-stone-400 font-bold block">Ticket Reference</span>
+                <span className="font-mono font-black text-amber-300 text-lg">
+                  {registeredAttendee.ticketCode || registeredAttendee.ticket_code}
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] uppercase text-stone-400 font-bold block">Status</span>
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/30">
+                  Confirmed
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs text-stone-300">
+              <div>
+                <span className="text-[10px] text-stone-400 block font-semibold">Attendee</span>
+                <span className="font-bold text-white">
+                  {registeredAttendee.title ? `${registeredAttendee.title} ` : ''}{registeredAttendee.fullName || registeredAttendee.full_name}
+                </span>
+              </div>
+              <div>
+                <span className="text-[10px] text-stone-400 block font-semibold">Phone</span>
+                <span className="font-bold text-white">{registeredAttendee.phone}</span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-white/5 border border-amber-500/20 rounded-xl flex items-start gap-2.5 text-xs text-stone-300">
+              <MessageSquare size={16} className="text-amber-400 shrink-0 mt-0.5" />
+              <p className="text-[11px] leading-relaxed">
+                An SMS confirmation with your ticket reference (<span className="font-mono font-bold text-amber-300">{registeredAttendee.ticketCode || registeredAttendee.ticket_code}</span>) has been sent to your phone. Present your ticket code or phone number at check-in when you arrive.
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-2">
+            <button
+              onClick={handleRegisterAnother}
+              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs tracking-wider shadow-lg shadow-amber-500/30 active:scale-95 transition-all"
+            >
+              CONFIRM ANOTHER REGISTRATION
+            </button>
+
+            <Link
+              to="/"
+              className="block w-full py-3 px-6 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 font-semibold text-xs border border-white/5 transition-colors"
+            >
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------
+  // Registration Form
+  // -------------------------------------------------------------
   return (
     <div className="flex-1 pb-24 text-white">
       {/* Header Banner */}
@@ -94,10 +217,10 @@ export default function Register() {
           <span>Delegate Registration</span>
         </div>
         <h1 className="font-cinzel font-black text-2xl tracking-wide gold-gradient-text uppercase">
-          RESERVE YOUR PASS
+          CONFIRM YOUR REGISTRATION
         </h1>
         <p className="text-xs text-stone-300 max-w-xs mx-auto mt-1">
-          Join us for PEC 2026: THIS SAME JESUS. Free entry, instant digital pass & SMS confirmation.
+          Join us for PEC 2026: THIS SAME JESUS. Free entry & SMS confirmation.
         </p>
       </div>
 
@@ -390,20 +513,12 @@ export default function Register() {
             </>
           ) : (
             <>
-              <span>COMPLETE REGISTRATION & GET PASS</span>
+              <span>CONFIRM YOUR REGISTRATION</span>
               <ArrowRight size={18} />
             </>
           )}
         </button>
       </form>
-
-      {/* Delegate Badge Modal */}
-      {showBadge && registeredAttendee && (
-        <BadgeModal
-          attendee={registeredAttendee}
-          onClose={() => setShowBadge(false)}
-        />
-      )}
     </div>
   );
 }
