@@ -158,9 +158,8 @@ export default function Landing() {
             <div>
               <p className="text-xs text-red-300/80 font-bold uppercase tracking-wider">Service Times</p>
               <div className="text-xs text-stone-200 space-y-0.5 mt-0.5">
-                <p><strong className="text-amber-300">Mon – Thu:</strong> 6:00 PM Each Night</p>
-                <p><strong className="text-amber-300">Friday:</strong> ALL NIGHT — 8:00 PM</p>
-                <p><strong className="text-amber-300">Sundays:</strong> 8:00 AM</p>
+                <p><strong className="text-amber-300">Mon – Sat:</strong> 6:00 PM Each Night</p>
+                <p><strong className="text-amber-300">Sunday:</strong> 8:00 AM Grand Finale</p>
               </div>
             </div>
           </div>
