@@ -18,7 +18,7 @@ export default function Landing() {
       new Date('2026-11-24T18:00:00'),
       new Date('2026-11-25T18:00:00'),
       new Date('2026-11-26T18:00:00'),
-      new Date('2026-11-27T20:00:00'), // Fri All Night Vigil
+      new Date('2026-11-27T18:00:00'), // Fri Evening Service
       new Date('2026-11-28T18:00:00'),
       new Date('2026-11-29T08:00:00'), // Sun Grand Finale
     ];
