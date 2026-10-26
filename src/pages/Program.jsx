@@ -27,19 +27,16 @@ export default function Program() {
           <h2 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
             <Clock size={14} /> Service Times Breakdown
           </h2>
-          <div className="grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="bg-black/40 p-2.5 rounded-xl border border-white/5">
-              <span className="block text-[10px] text-stone-400 uppercase font-semibold">Mon – Thu</span>
+          <div className="grid grid-cols-2 gap-3 text-center text-xs">
+            <div className="bg-black/40 p-3 rounded-xl border border-white/5">
+              <span className="block text-[10px] text-stone-400 uppercase font-semibold">Mon – Sat</span>
               <span className="font-bold text-amber-300 text-sm">6:00 PM</span>
+              <span className="block text-[9px] text-amber-400/80 font-medium uppercase mt-0.5">Evening Services</span>
             </div>
-            <div className="bg-red-950/60 p-2.5 rounded-xl border border-red-500/30">
-              <span className="block text-[10px] text-red-300 uppercase font-semibold">Friday</span>
-              <span className="font-bold text-red-200 text-sm">8:00 PM</span>
-              <span className="block text-[8px] text-red-400 font-extrabold uppercase">All Night</span>
-            </div>
-            <div className="bg-black/40 p-2.5 rounded-xl border border-white/5">
-              <span className="block text-[10px] text-stone-400 uppercase font-semibold">Sundays</span>
-              <span className="font-bold text-amber-300 text-sm">8:00 AM</span>
+            <div className="bg-amber-950/40 p-3 rounded-xl border border-amber-500/30">
+              <span className="block text-[10px] text-amber-300 uppercase font-semibold">Sunday</span>
+              <span className="font-bold text-amber-200 text-sm">8:00 AM</span>
+              <span className="block text-[9px] text-amber-400 font-extrabold uppercase mt-0.5">Grand Finale</span>
             </div>
           </div>
         </div>
