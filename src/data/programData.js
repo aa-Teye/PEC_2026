@@ -98,12 +98,12 @@ export const PROGRAM_ACTIVITIES = [
     dayNumber: "Day 5",
     dayLabel: "Day 5: Fri 27 Nov",
     date: "Fri 27 Nov",
-    time: "8:00 PM",
-    sessionTitle: "Prophetic ALL NIGHT VIGIL",
-    theme: "Night of Fire, Mantles & Wonders",
-    category: "All-Night Vigil",
+    time: "6:00 PM",
+    sessionTitle: "Night of Fire, Mantles & Wonders",
+    theme: "Supernatural Fire & Prophetic Impartation",
+    category: "Prophetic & Impartation",
     badgeColor: "from-rose-600 to-red-800",
-    description: "Explosive all-night vigil from 8:00 PM till dawn! Holy Ghost power, deliverance and prophetic impartation."
+    description: "Dynamic evening service at 6:00 PM! Holy Ghost fire, deliverance, wonders and prophetic impartation."
   },
   {
     id: 6,
