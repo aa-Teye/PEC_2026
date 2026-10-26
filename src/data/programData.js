@@ -12,7 +12,7 @@ export const PROGRAM_DATA = {
   subTheme: "The Lord who walked Galilee still heals, delivers, and establishes His people today.",
   date: "23rd – 29th November",
   datesFormatted: "23 - 29 NOVEMBER",
-  time: "Mon - Thu & Sat: 6:00pm | Fri All Night: 8:00pm | Sun Grand Finale: 8:00am",
+  time: "Mon - Sat: 6:00pm | Sun Grand Finale: 8:00am",
   venue: "Overcomers Nation Church",
   venueSub: "Opposite Ayrton Drug, Tesano, Accra",
   dressCode: "Modest / Decent & Elegant",
