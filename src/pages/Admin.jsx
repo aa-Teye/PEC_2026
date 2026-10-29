@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Lock, Users, UserCheck, Car, Heart, Search,
   Download, FileSpreadsheet, FileText, Trash2, RefreshCw, Eye,
-  CheckCircle2, XCircle, Database, MessageSquare, Send
+  CheckCircle2, XCircle, MessageSquare, Send
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -268,14 +268,6 @@ export default function Admin() {
           <div className="flex items-center gap-2 mb-1">
             <span className="font-cinzel font-black text-xl sm:text-2xl gold-gradient-text">
               PEC 2026 ADMIN
-            </span>
-            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-              dbStatus.connected
-                ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-300'
-                : 'bg-amber-500/15 border border-amber-500/40 text-amber-300'
-            }`}>
-              <Database size={10} />
-              {dbStatus.message}
             </span>
           </div>
           <p className="text-xs text-stone-400">
