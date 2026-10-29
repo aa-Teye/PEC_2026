@@ -4,17 +4,17 @@ export const ATTENDANCE_KEY = 'PEC_ATTENDANCE_DATA';
 
 export const PROGRAM_DATA = {
   name: "PEC",
-  fullName: "PROPHETIC EAGLES CONVOCATION",
+  fullName: "PROPHETIC EAGLES CONVOCATION 2026",
   theme: "THIS SAME JESUS",
   scripture: "Acts 1:11",
   scriptureText: "This same Jesus, which is taken up from you into heaven, shall so come in like manner as ye have seen him go into heaven.",
   tagline: "Experience the Miraculous, Healing and Transformative Power of Christ",
   subTheme: "The Lord who walked Galilee still heals, delivers, and establishes His people today.",
-  date: "23rd – 29th November",
-  datesFormatted: "23 - 29 NOVEMBER",
-  time: "Mon - Sat: 6:00pm | Sun Grand Finale: 8:00am",
+  date: "23rd – 29th November 2026",
+  datesFormatted: "23 - 29 NOVEMBER 2026",
+  time: "Mon - Fri: 6:00pm | Sun Grand Climax: 8:00am | Sun Worship Concert (WOP): 5:00pm",
   venue: "Overcomers Nation Church",
-  venueSub: "Opposite Ayrton Drug, Tesano, Accra",
+  venueSub: "Tesano, Accra (Opposite Ayrton Drug)",
   dressCode: "Modest / Decent & Elegant",
   entry: "100% FREE — Invite Everyone",
   targetAudience: ["All Believers", "Youth & Families", "Seekers of Miracles & Deliverance"],
@@ -119,16 +119,29 @@ export const PROGRAM_ACTIVITIES = [
   },
   {
     id: 7,
-    dayNumber: "Day 7",
-    dayLabel: "Day 7: Sun 29 Nov",
+    dayNumber: "Day 7 (Morning)",
+    dayLabel: "Day 7: Sun 29 Nov (Grand Climax)",
     date: "Sun 29 Nov",
     time: "8:00 AM",
-    sessionTitle: "GRAND FINALE CELEBRATION",
+    sessionTitle: "GRAND CLIMAX CELEBRATION",
     theme: "Supernatural Seal & Crown of Glory",
-    category: "Grand Finale & Thanksgiving",
+    category: "Grand Climax & Impartation",
     badgeColor: "from-amber-400 via-yellow-500 to-amber-700",
     finale: true,
-    description: "The climactic final service! Special mantle impartation, anointing oil release and thanksgiving."
+    description: "The grand climax service! Special mantle impartation, anointing oil release and thanksgiving."
+  },
+  {
+    id: 8,
+    dayNumber: "Day 7 (Concert)",
+    dayLabel: "Day 7: Sun 29 Nov (WOP Concert)",
+    date: "Sun 29 Nov",
+    time: "5:00 PM",
+    sessionTitle: "WHEN OVERCOMERS PRAISE (WOP)",
+    theme: "Worship Concert & High Praise Celebration",
+    category: "Worship Concert & High Praise",
+    badgeColor: "from-fuchsia-600 via-pink-600 to-rose-700",
+    concert: true,
+    description: "The official PEC 2026 Worship Concert: When Overcomers Praise (WOP)! An atmosphere of intense praise, power, and glory."
   }
 ];
 

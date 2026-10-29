@@ -17,26 +17,31 @@ export default function Program() {
           PROGRAM & SCHEDULE
         </h1>
         <p className="text-xs text-stone-300 max-w-xs mx-auto mt-1">
-          23rd – 29th November • Overcomers Nation Church, Tesano
+          23rd – 29th November 2026 • Overcomers Nation Church, Tesano
         </p>
       </div>
 
       {/* Schedule Times Summary Box */}
       <div className="p-4">
         <div className="bg-[#180408] border border-amber-500/30 rounded-2xl p-4 shadow-lg">
-          <h2 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <Clock size={14} /> Service Times Breakdown
+          <h2 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+            <Clock size={14} /> Service Times Breakdown (Official Schedule)
           </h2>
-          <div className="grid grid-cols-2 gap-3 text-center text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center text-xs">
             <div className="bg-black/40 p-3 rounded-xl border border-white/5">
-              <span className="block text-[10px] text-stone-400 uppercase font-semibold">Mon – Sat</span>
+              <span className="block text-[10px] text-stone-400 uppercase font-semibold">Mon – Fri</span>
               <span className="font-bold text-amber-300 text-sm">6:00 PM</span>
               <span className="block text-[9px] text-amber-400/80 font-medium uppercase mt-0.5">Evening Services</span>
             </div>
             <div className="bg-amber-950/40 p-3 rounded-xl border border-amber-500/30">
-              <span className="block text-[10px] text-amber-300 uppercase font-semibold">Sunday</span>
+              <span className="block text-[10px] text-amber-300 uppercase font-semibold">Sunday Morning</span>
               <span className="font-bold text-amber-200 text-sm">8:00 AM</span>
-              <span className="block text-[9px] text-amber-400 font-extrabold uppercase mt-0.5">Grand Finale</span>
+              <span className="block text-[9px] text-amber-400 font-extrabold uppercase mt-0.5">Grand Climax</span>
+            </div>
+            <div className="bg-rose-950/40 p-3 rounded-xl border border-rose-500/30">
+              <span className="block text-[10px] text-rose-300 uppercase font-semibold">Sunday Evening</span>
+              <span className="font-bold text-rose-200 text-sm">5:00 PM</span>
+              <span className="block text-[9px] text-rose-400 font-extrabold uppercase mt-0.5">WOP Concert</span>
             </div>
           </div>
         </div>

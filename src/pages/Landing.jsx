@@ -20,7 +20,8 @@ export default function Landing() {
       new Date('2026-11-26T18:00:00'),
       new Date('2026-11-27T18:00:00'), // Fri Evening Service
       new Date('2026-11-28T18:00:00'),
-      new Date('2026-11-29T08:00:00'), // Sun Grand Finale
+      new Date('2026-11-29T08:00:00'), // Sun Grand Climax
+      new Date('2026-11-29T17:00:00'), // Sun Worship Concert (WOP)
     ];
 
     const now = Date.now();
@@ -34,7 +35,7 @@ export default function Landing() {
       } else {
         // Fallback grand finale
         target = new Date('2026-11-29T08:00:00');
-        setSessionLabel('COUNTDOWN TO GRAND FINALE');
+        setSessionLabel('COUNTDOWN TO GRAND CLIMAX');
       }
     } else {
       setSessionLabel('COUNTDOWN TO NEXT SERVICE');
@@ -67,26 +68,21 @@ export default function Landing() {
 
         {/* Top Tag */}
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
-          <span>PROPHETIC EAGLES CONVOCATION (PEC)</span>
+          <span>PROPHETIC EAGLES CONVOCATION (PEC 2026)</span>
         </div>
 
-        {/* Poster / Artwork Preview */}
-        <div className="relative mx-auto w-full max-w-[340px] aspect-[3/4] rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-2xl shadow-red-950/90 group mb-6">
+        {/* Poster / Artwork Preview - Pure Unobstructed View */}
+        <div className="relative mx-auto w-full max-w-[350px] aspect-[4/5] rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-2xl shadow-red-950/90 group mb-6 bg-black">
           <img
             src="/flyer.jpg"
-            alt="PEC - THIS SAME JESUS Flyer"
+            alt="PEC 2026 - THIS SAME JESUS Official Flyer"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
-          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-left">
-            <div>
-              <p className="text-[10px] text-amber-300 font-bold uppercase tracking-widest">Theme</p>
-              <p className="text-lg font-cinzel font-black text-white leading-tight">THIS SAME JESUS</p>
-              <p className="text-[11px] text-amber-400 font-semibold">Acts 1:11</p>
-            </div>
-            <div className="bg-amber-500 text-black font-extrabold px-2.5 py-1 rounded-lg text-xs shadow-md">
-              FREE
-            </div>
+          <div className="absolute top-3 left-3 bg-black/70 border border-amber-500/30 text-amber-300 font-bold px-2 py-0.5 rounded-lg text-[10px] shadow-md uppercase tracking-wider backdrop-blur-sm">
+            OFFICIAL FLYER
+          </div>
+          <div className="absolute top-3 right-3 bg-amber-500 text-black font-extrabold px-2.5 py-1 rounded-lg text-[11px] shadow-lg tracking-wider uppercase">
+            FREE ENTRY
           </div>
         </div>
 
@@ -95,7 +91,7 @@ export default function Landing() {
           THIS SAME JESUS
         </h1>
         <p className="text-sm font-semibold text-amber-300 tracking-widest uppercase mb-2">
-          Acts 1:11 • PROPHETIC EAGLES CONVOCATION (PEC 2026)
+          Acts 1:11 • PROPHETIC EAGLES CONVOCATION 2026
         </p>
         <p className="text-xs text-stone-300 max-w-sm mx-auto leading-relaxed mb-6">
           "This same Jesus, which is taken up from you into heaven, shall so come in like manner as ye have seen him go."
@@ -145,7 +141,7 @@ export default function Landing() {
             </div>
             <div>
               <p className="text-xs text-amber-300/80 font-bold uppercase tracking-wider">Conference Dates</p>
-              <p className="text-sm font-bold text-white">23rd – 29th November</p>
+              <p className="text-sm font-bold text-white">23rd – 29th November 2026</p>
               <p className="text-xs text-stone-400">7 Days of Supernatural Glory & Encounters</p>
             </div>
           </div>
@@ -157,9 +153,10 @@ export default function Landing() {
             </div>
             <div>
               <p className="text-xs text-red-300/80 font-bold uppercase tracking-wider">Service Times</p>
-              <div className="text-xs text-stone-200 space-y-0.5 mt-0.5">
-                <p><strong className="text-amber-300">Mon – Sat:</strong> 6:00 PM Each Night</p>
-                <p><strong className="text-amber-300">Sunday:</strong> 8:00 AM Grand Finale</p>
+              <div className="text-xs text-stone-200 space-y-1 mt-1">
+                <p><strong className="text-amber-300">Mon – Fri:</strong> 6:00 PM Each Night</p>
+                <p><strong className="text-amber-300">Sunday (Grand Climax):</strong> 8:00 AM</p>
+                <p><strong className="text-amber-300">Sunday (Worship Concert):</strong> 5:00 PM • When Overcomers Praise (WOP)</p>
               </div>
             </div>
           </div>
