@@ -16,7 +16,7 @@
 - **Digital Delegate Pass & QR Code**: Immediate pass generation on registration with ticket code (`PEC-XXXXXX`), QR code verification, and 1-click PDF badge download.
 - **Attendance Check-In Terminal**: Search by phone or ticket code, live duplicate-check prevention per conference day, and timestamps.
 - **Admin Management Portal**:
-  - Protected by PIN (`admin2026`).
+  - Protected by PIN (`2500`).
   - Real-time Neon DB connection status indicator.
   - Search and filter by status, first-timers, or transport assistance.
   - 1-click **Excel / CSV Export** and **PDF Roster**.
@@ -33,7 +33,7 @@ Add these to your **Vercel Project Settings > Environment Variables** (or local 
 | `DATABASE_URL` | Neon PostgreSQL connection string (pooler recommended) |
 | `MNOTIFY_API_KEY` | mNotify API key for SMS delivery (`aHZxQXN6YnBvUHFHRU9XaUdvZnQ`) |
 | `SMS_SENDER_ID` | Sender ID for SMS messages (default: `OVERCOMERS`, max 11 chars) |
-| `ADMIN_PASSWORD` | PIN to unlock admin portal (default: `admin2026`) |
+| `ADMIN_PASSWORD` | PIN to unlock admin portal (default: `2500`) |
 
 ---
 

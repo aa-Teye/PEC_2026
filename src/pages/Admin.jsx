@@ -70,7 +70,8 @@ export default function Admin() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (pin === 'admin2026' || pin === 'eom2026') {
+    const cleanPin = pin.trim();
+    if (cleanPin === '2500' || cleanPin === 'admin2026' || cleanPin === 'eom2026' || cleanPin === (import.meta.env.VITE_ADMIN_PASSWORD || '2500')) {
       sessionStorage.setItem('PEC_ADMIN_AUTH', 'true');
       setAuthenticated(true);
       setPinError(false);
@@ -242,7 +243,7 @@ export default function Admin() {
               />
               {pinError && (
                 <p className="text-xs text-red-400 mt-2 font-medium">
-                  Invalid PIN. (Default: admin2026)
+                  Invalid PIN. Please enter correct passcode (2500).
                 </p>
               )}
             </div>
