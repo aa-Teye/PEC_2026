@@ -5,7 +5,6 @@ import attendanceHandler from './api/attendance.js';
 import statsHandler from './api/stats.js';
 import verifyHandler from './api/verify.js';
 import initHandler from './api/init.js';
-import sendSmsHandler from './api/send-sms.js';
 
 function vercelServerlessPlugin(env) {
   return {
@@ -66,8 +65,6 @@ function vercelServerlessPlugin(env) {
             await verifyHandler(vercelReq, vercelRes);
           } else if (pathname === '/api/init') {
             await initHandler(vercelReq, vercelRes);
-          } else if (pathname === '/api/send-sms') {
-            await sendSmsHandler(vercelReq, vercelRes);
           } else {
             next();
           }

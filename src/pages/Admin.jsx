@@ -1,13 +1,28 @@
 import { useState, useEffect } from 'react';
 import {
-  Lock, Users, UserCheck, Car, Heart, Search,
+  Lock, Users, UserCheck, Car, Heart, Search, X, BarChart3,
   Download, FileSpreadsheet, FileText, Trash2, RefreshCw, Eye,
-  CheckCircle2, XCircle, MessageSquare, Send
+  CheckCircle2, XCircle, MessageSquare
 } from 'lucide-react';
+import {
+  BarChart, Bar, AreaChart, Area, XAxis, YAxis,
+  CartesianGrid, Tooltip, ResponsiveContainer, LabelList
+} from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { PROGRAM_DATA, fetchAllRegistrations } from '../data/programData';
+import { PROGRAM_DATA, DAYS_OF_CONVENTION, fetchAllRegistrations } from '../data/programData';
 import BadgeModal from '../components/BadgeModal';
+
+const CHART_GOLD = '#f59e0b';
+const CHART_GRID = 'rgba(255,255,255,0.06)';
+const CHART_TICK = { fill: '#a8a29e', fontSize: 10 };
+const CHART_TOOLTIP_STYLE = {
+  background: '#1c0712',
+  border: '1px solid rgba(245,158,11,0.3)',
+  borderRadius: 10,
+  fontSize: 12,
+  color: '#fff'
+};
 
 export default function Admin() {
   const [authenticated, setAuthenticated] = useState(() => {
@@ -23,9 +38,10 @@ export default function Admin() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [transportFilter, setTransportFilter] = useState('ALL');
   const [firstTimerFilter, setFirstTimerFilter] = useState('ALL');
-  const [sendingSmsFor, setSendingSmsFor] = useState(null);
+  const [attendanceSummary, setAttendanceSummary] = useState([]);
 
   const [selectedAttendee, setSelectedAttendee] = useState(null);
+  const [selectedPrayer, setSelectedPrayer] = useState(null);
 
   const checkDb = async () => {
     try {
@@ -53,6 +69,16 @@ export default function Admin() {
       setRegistrations(list);
     } catch (e) {
       console.error(e);
+    }
+
+    try {
+      const res = await fetch('/api/attendance');
+      if (res.ok) {
+        const json = await res.json();
+        setAttendanceSummary(json.summary || []);
+      }
+    } catch (e) {
+      console.error('Could not load attendance summary:', e);
     } finally {
       setLoading(false);
     }
@@ -95,31 +121,6 @@ export default function Admin() {
     const updated = registrations.filter(r => r.ticketCode !== reg.ticketCode);
     setRegistrations(updated);
     localStorage.setItem('PEC_REGISTRATIONS_DATA', JSON.stringify(updated));
-  };
-
-  const handleSendSms = async (reg) => {
-    setSendingSmsFor(reg.ticketCode);
-    try {
-      const res = await fetch('/api/send-sms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: reg.phone,
-          fullName: `${reg.title ? reg.title + ' ' : ''}${reg.fullName}`,
-          ticketCode: reg.ticketCode
-        })
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        alert(`SMS sent successfully to ${reg.phone}!`);
-      } else {
-        alert(`SMS failed: ${data.error || 'Check API credentials'}`);
-      }
-    } catch (err) {
-      alert(`SMS error: ${err.message}`);
-    } finally {
-      setSendingSmsFor(null);
-    }
   };
 
   // Export to CSV
@@ -202,7 +203,8 @@ export default function Admin() {
       (r.fullName || '').toLowerCase().includes(term) ||
       (r.phone || '').includes(term) ||
       (r.ticketCode || '').toLowerCase().includes(term) ||
-      (r.location || '').toLowerCase().includes(term);
+      (r.location || '').toLowerCase().includes(term) ||
+      (r.prayerRequest || '').toLowerCase().includes(term);
 
     const matchStatus = statusFilter === 'ALL' || r.memberStatus === statusFilter;
     const matchTransport = transportFilter === 'ALL' || r.needsTransport === transportFilter;
@@ -215,6 +217,53 @@ export default function Admin() {
   const firstTimersCount = registrations.filter(r => r.firstTimer === 'yes').length;
   const transportCount = registrations.filter(r => r.needsTransport === 'yes').length;
   const membersCount = registrations.filter(r => (r.memberStatus || '').includes('Member')).length;
+
+  const prayerRegs = registrations
+    .filter(r => (r.prayerRequest || '').trim().length > 0)
+    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+  // Check-ins per conference day, in program order (not just the days that have logs)
+  const dayShortLabelCounts = {};
+  const dailyAttendanceData = DAYS_OF_CONVENTION.map(d => {
+    const found = attendanceSummary.find(s => s.day_label === d.id);
+    const base = d.id.split(':')[0].replace('Day ', 'D');
+    // Some days (e.g. Day 7 service + Day 7 concert) share the same number -
+    // suffix a/b so duplicate sessions aren't shown as identical bars.
+    dayShortLabelCounts[base] = (dayShortLabelCounts[base] || 0) + 1;
+    const occurrence = dayShortLabelCounts[base];
+    const isDuplicated = DAYS_OF_CONVENTION.filter(x => x.id.split(':')[0].replace('Day ', 'D') === base).length > 1;
+    return {
+      day: isDuplicated ? `${base}${String.fromCharCode(96 + occurrence)}` : base,
+      fullLabel: d.label,
+      count: Number(found?.count || 0)
+    };
+  });
+
+  // Cumulative registrations by calendar date
+  const regByDate = {};
+  registrations.forEach(r => {
+    if (!r.created_at) return;
+    const key = new Date(r.created_at).toISOString().slice(0, 10);
+    regByDate[key] = (regByDate[key] || 0) + 1;
+  });
+  let runningTotal = 0;
+  const registrationTrendData = Object.keys(regByDate).sort().map(key => {
+    runningTotal += regByDate[key];
+    return {
+      date: new Date(key).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
+      total: runningTotal
+    };
+  });
+
+  // Registrants ranked by category (member status), largest first
+  const statusCounts = {};
+  registrations.forEach(r => {
+    const key = r.memberStatus || 'Unspecified';
+    statusCounts[key] = (statusCounts[key] || 0) + 1;
+  });
+  const memberStatusData = Object.entries(statusCounts)
+    .map(([status, count]) => ({ status, count }))
+    .sort((a, b) => b.count - a.count);
 
   if (!authenticated) {
     return (
@@ -311,7 +360,7 @@ export default function Admin() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 my-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 my-6">
         <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
           <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block">
             Total Registered
@@ -351,6 +400,142 @@ export default function Admin() {
           </span>
           <span className="text-[10px] text-stone-500 mt-1 block">Overcomers Nation</span>
         </div>
+
+        <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
+          <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Heart size={11} className="text-pink-400" /> Prayer Requests
+          </span>
+          <span className="text-3xl font-mono font-black text-pink-300 mt-1 block">
+            {prayerRegs.length}
+          </span>
+          <span className="text-[10px] text-stone-500 mt-1 block">Intercessory Queue</span>
+        </div>
+      </div>
+
+      {/* Analytics & Insights */}
+      <div className="flex items-center gap-2 mb-3 mt-2">
+        <BarChart3 size={15} className="text-amber-400" />
+        <h2 className="font-cinzel font-black text-sm text-white uppercase tracking-wider">Analytics & Insights</h2>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mb-3.5">
+        <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
+          <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block mb-2">
+            Daily Check-Ins (All 7 Days)
+          </span>
+          <div style={{ width: '100%', height: 220 }}>
+            <ResponsiveContainer>
+              <BarChart data={dailyAttendanceData} margin={{ top: 16, right: 8, left: -16, bottom: 0 }}>
+                <CartesianGrid vertical={false} stroke={CHART_GRID} />
+                <XAxis dataKey="day" tick={CHART_TICK} axisLine={{ stroke: CHART_GRID }} tickLine={false} />
+                <YAxis allowDecimals={false} tick={CHART_TICK} axisLine={false} tickLine={false} width={28} />
+                <Tooltip
+                  cursor={{ fill: 'rgba(245,158,11,0.08)' }}
+                  contentStyle={CHART_TOOLTIP_STYLE}
+                  labelFormatter={(_, payload) => payload?.[0]?.payload?.fullLabel || ''}
+                />
+                <Bar dataKey="count" name="Checked In" fill={CHART_GOLD} radius={[4, 4, 0, 0]} maxBarSize={36}>
+                  <LabelList dataKey="count" position="top" fill="#fde68a" fontSize={11} fontWeight={700} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
+          <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block mb-2">
+            Registration Trend (Cumulative)
+          </span>
+          {registrationTrendData.length === 0 ? (
+            <div className="h-[220px] flex items-center justify-center text-xs text-stone-500 italic">
+              Not enough data yet.
+            </div>
+          ) : (
+            <div style={{ width: '100%', height: 220 }}>
+              <ResponsiveContainer>
+                <AreaChart data={registrationTrendData} margin={{ top: 16, right: 8, left: -16, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="regTrendFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={CHART_GOLD} stopOpacity={0.35} />
+                      <stop offset="95%" stopColor={CHART_GOLD} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid vertical={false} stroke={CHART_GRID} />
+                  <XAxis dataKey="date" tick={CHART_TICK} axisLine={{ stroke: CHART_GRID }} tickLine={false} minTickGap={24} />
+                  <YAxis allowDecimals={false} tick={CHART_TICK} axisLine={false} tickLine={false} width={28} />
+                  <Tooltip cursor={{ stroke: CHART_GOLD, strokeWidth: 1 }} contentStyle={CHART_TOOLTIP_STYLE} />
+                  <Area
+                    type="monotone" dataKey="total" name="Total Registered"
+                    stroke={CHART_GOLD} strokeWidth={2} fill="url(#regTrendFill)"
+                    dot={{ r: 2, fill: CHART_GOLD, strokeWidth: 0 }}
+                    activeDot={{ r: 4 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 mb-6">
+        <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
+          <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block mb-2">
+            Delegates by Category
+          </span>
+          <div style={{ width: '100%', height: Math.max(160, memberStatusData.length * 50) }}>
+            <ResponsiveContainer>
+              <BarChart data={memberStatusData} layout="vertical" margin={{ top: 4, right: 36, left: 0, bottom: 4 }}>
+                <CartesianGrid horizontal={false} stroke={CHART_GRID} />
+                <XAxis type="number" allowDecimals={false} tick={CHART_TICK} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="status" tick={CHART_TICK} axisLine={false} tickLine={false} width={120} />
+                <Tooltip cursor={{ fill: 'rgba(245,158,11,0.08)' }} contentStyle={CHART_TOOLTIP_STYLE} />
+                <Bar dataKey="count" fill={CHART_GOLD} radius={[0, 4, 4, 0]} maxBarSize={22}>
+                  <LabelList dataKey="count" position="right" fill="#fde68a" fontSize={11} fontWeight={700} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Heart size={12} className="text-pink-400" /> Recent Prayer Points & Petitions
+            </span>
+            {prayerRegs.length > 0 && (
+              <span className="text-[10px] font-bold text-pink-300 bg-pink-500/10 border border-pink-500/30 px-2 py-0.5 rounded-full">
+                {prayerRegs.length} total
+              </span>
+            )}
+          </div>
+
+          {prayerRegs.length === 0 ? (
+            <p className="text-xs text-stone-500 py-8 text-center italic">No prayer requests submitted yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[260px] overflow-y-auto pr-1">
+              {prayerRegs.slice(0, 8).map((r) => {
+                const initials = (r.fullName || '??').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                return (
+                  <button
+                    key={r.ticketCode}
+                    onClick={() => setSelectedPrayer(r)}
+                    className="text-left bg-black/30 hover:bg-pink-500/5 border border-white/10 hover:border-pink-500/30 rounded-xl p-3 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <div className="w-6 h-6 rounded-full bg-pink-500/20 text-pink-200 flex items-center justify-center text-[9px] font-black shrink-0">
+                        {initials}
+                      </div>
+                      <span className="text-[11px] font-bold text-white truncate">{r.fullName}</span>
+                    </div>
+                    <p className="text-[11px] text-stone-400 italic leading-relaxed line-clamp-2">
+                      "{r.prayerRequest}"
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Filter & Search Bar */}
@@ -360,7 +545,7 @@ export default function Admin() {
             <Search size={16} className="absolute left-3 top-3 text-stone-400" />
             <input
               type="text"
-              placeholder="Search by name, phone, ticket code, or residential area..."
+              placeholder="Search by name, phone, ticket code, area, or prayer request..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="w-full bg-black/40 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-400"
@@ -474,14 +659,6 @@ export default function Admin() {
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
-                          onClick={() => handleSendSms(reg)}
-                          disabled={sendingSmsFor === reg.ticketCode}
-                          className="p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 transition-colors"
-                          title="Send SMS Ticket"
-                        >
-                          <Send size={13} className={sendingSmsFor === reg.ticketCode ? 'animate-pulse' : ''} />
-                        </button>
-                        <button
                           onClick={() => setSelectedAttendee(reg)}
                           className="p-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition-colors"
                           title="View & Download Pass"
@@ -511,6 +688,51 @@ export default function Admin() {
           attendee={selectedAttendee}
           onClose={() => setSelectedAttendee(null)}
         />
+      )}
+
+      {/* Prayer Request Full-View Modal */}
+      {selectedPrayer && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          onClick={() => setSelectedPrayer(null)}
+        >
+          <div
+            className="w-full max-w-md bg-[#160408] border border-pink-500/30 rounded-3xl p-6 shadow-2xl relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedPrayer(null)}
+              className="absolute top-4 right-4 text-stone-400 hover:text-white"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-11 h-11 rounded-full bg-pink-500/20 text-pink-200 flex items-center justify-center font-black text-sm shrink-0">
+                {(selectedPrayer.fullName || '??').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <p className="font-bold text-white text-sm">
+                  {selectedPrayer.title ? `${selectedPrayer.title} ` : ''}{selectedPrayer.fullName}
+                </p>
+                <p className="text-xs text-stone-400 font-mono">{selectedPrayer.phone}</p>
+              </div>
+            </div>
+
+            <div className="bg-black/30 border border-pink-500/20 rounded-xl p-4">
+              <p className="text-sm text-stone-200 leading-relaxed italic whitespace-pre-wrap">
+                "{selectedPrayer.prayerRequest}"
+              </p>
+            </div>
+
+            <button
+              onClick={() => setSelectedPrayer(null)}
+              className="mt-4 w-full py-2.5 rounded-xl bg-pink-500/10 border border-pink-500/30 hover:bg-pink-500/20 text-pink-200 text-xs font-bold uppercase tracking-wider"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
