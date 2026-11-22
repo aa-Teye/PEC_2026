@@ -1,17 +1,42 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   UserCheck, Search, CheckCircle2, AlertCircle, Clock,
-  Calendar, RefreshCw, Phone, User, ArrowRight
+  Calendar, RefreshCw, User, ArrowRight, Lock, X, Undo2
 } from 'lucide-react';
-import { DAYS_OF_CONVENTION, checkInAttendee } from '../data/programData';
+import { DAYS_OF_CONVENTION, checkInAttendee, searchAttendees, undoCheckIn } from '../data/programData';
+
+const AUTH_KEY = 'PEC_ATTENDANCE_AUTH';
 
 export default function Attendance() {
+  const [authenticated, setAuthenticated] = useState(() => {
+    return sessionStorage.getItem(AUTH_KEY) === 'true';
+  });
+  const [pin, setPin] = useState('');
+  const [pinError, setPinError] = useState(false);
+
   const [selectedDay, setSelectedDay] = useState(DAYS_OF_CONVENTION[0]?.id || 'Day 1: Mon 23 Nov');
   const [searchInput, setSearchInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [candidates, setCandidates] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [confirming, setConfirming] = useState(false);
+  const [undoingKey, setUndoingKey] = useState(null);
   const [result, setResult] = useState(null);
   const [recentLogs, setRecentLogs] = useState([]);
   const [stats, setStats] = useState({ totalChecked: 0, dayChecked: 0 });
+  const debounceRef = useRef(null);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const cleanPin = pin.trim();
+    if (cleanPin === '2500' || cleanPin === (import.meta.env.VITE_ADMIN_PASSWORD || '2500')) {
+      sessionStorage.setItem(AUTH_KEY, 'true');
+      setAuthenticated(true);
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -38,37 +63,117 @@ export default function Attendance() {
   };
 
   useEffect(() => {
-    loadData();
-  }, [selectedDay]);
+    if (authenticated) loadData();
+  }, [selectedDay, authenticated]);
 
-  const handleCheckIn = async (e) => {
-    e.preventDefault();
-    if (!searchInput.trim()) return;
-
-    setLoading(true);
-    setResult(null);
+  // Live search-as-you-type: matches phone, first name, surname or ticket code together
+  useEffect(() => {
+    if (!authenticated) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
 
     const term = searchInput.trim();
-    const isCode = term.toUpperCase().startsWith('PEC-');
+    if (term.length < 2) {
+      setCandidates([]);
+      return;
+    }
 
-    try {
-      const payload = isCode
-        ? { ticketCode: term.toUpperCase(), dayLabel: selectedDay }
-        : { phone: term, dayLabel: selectedDay };
-
-      const res = await checkInAttendee(payload);
-      setResult(res);
-
-      if (res.success) {
-        setSearchInput('');
-        loadData();
+    debounceRef.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const results = await searchAttendees({ term, dayLabel: selectedDay });
+        setCandidates(results);
+      } finally {
+        setSearching(false);
       }
+    }, 300);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [searchInput, selectedDay, authenticated]);
+
+  const handlePickCandidate = (candidate) => {
+    setSelectedCandidate(candidate);
+    setCandidates([]);
+    setResult(null);
+  };
+
+  const handleCancelSelection = () => {
+    setSelectedCandidate(null);
+    setSearchInput('');
+  };
+
+  const handleConfirmCheckIn = async () => {
+    if (!selectedCandidate) return;
+    setConfirming(true);
+    try {
+      const res = await checkInAttendee({ ticketCode: selectedCandidate.ticketCode, dayLabel: selectedDay });
+      setResult({ ...res, ticketCode: selectedCandidate.ticketCode, dayLabel: selectedDay });
+      setSelectedCandidate(null);
+      setSearchInput('');
+      loadData();
     } catch (err) {
       setResult({ success: false, error: err.message });
     } finally {
-      setLoading(false);
+      setConfirming(false);
     }
   };
+
+  const handleUndo = async (ticketCode, dayLabel) => {
+    const key = `${ticketCode}|${dayLabel}`;
+    setUndoingKey(key);
+    try {
+      await undoCheckIn({ ticketCode, dayLabel });
+      if (result?.ticketCode === ticketCode && result?.dayLabel === dayLabel) {
+        setResult(null);
+      }
+      loadData();
+    } finally {
+      setUndoingKey(null);
+    }
+  };
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a0103] text-white">
+        <div className="w-full max-w-sm bg-[#160408] border border-amber-500/30 rounded-3xl p-6 shadow-2xl text-center">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-amber-500 to-red-600 p-0.5 mb-4 shadow-lg shadow-red-900/50">
+            <div className="w-full h-full bg-[#120306] rounded-[14px] flex items-center justify-center text-amber-400">
+              <Lock size={24} />
+            </div>
+          </div>
+
+          <h2 className="font-cinzel font-black text-xl text-white">Usher Check-In Access</h2>
+          <p className="text-xs text-stone-400 mt-1 mb-6">
+            Enter staff PIN to open the attendance terminal.
+          </p>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <input
+                type="password"
+                placeholder="Enter Staff PIN"
+                value={pin}
+                onChange={e => setPin(e.target.value)}
+                autoFocus
+                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-center text-lg tracking-widest text-white focus:outline-none focus:border-amber-400 font-mono"
+              />
+              {pinError && (
+                <p className="text-xs text-red-400 mt-2 font-medium">
+                  Invalid PIN. Please enter the correct passcode.
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-black font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20"
+            >
+              Unlock Terminal
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 pb-24 text-white">
@@ -82,7 +187,7 @@ export default function Attendance() {
           ATTENDANCE VERIFICATION
         </h1>
         <p className="text-xs text-stone-300 max-w-xs mx-auto mt-1">
-          Scan QR codes or search by phone/ticket code for instant admission.
+          Search by phone, first name or surname — matching delegates appear instantly.
         </p>
       </div>
 
@@ -97,7 +202,7 @@ export default function Attendance() {
               <button
                 key={d.id}
                 type="button"
-                onClick={() => { setSelectedDay(d.id); setResult(null); }}
+                onClick={() => { setSelectedDay(d.id); setResult(null); setSelectedCandidate(null); }}
                 className={`px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
                   selectedDay === d.id
                     ? 'bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/30'
@@ -134,28 +239,99 @@ export default function Attendance() {
         {/* Search / Scan Box */}
         <div className="bg-gradient-to-br from-[#1c050a] to-[#120306] border border-amber-500/30 rounded-2xl p-4 shadow-xl">
           <h2 className="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <Search size={14} className="text-amber-400" /> Enter Ticket Code or Phone Number
+            <Search size={14} className="text-amber-400" /> Search Phone, First Name or Surname
           </h2>
 
-          <form onSubmit={handleCheckIn} className="space-y-3">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="e.g. PEC-123456 or 0244123456"
-                value={searchInput}
-                onChange={e => setSearchInput(e.target.value)}
-                autoFocus
-                className="w-full bg-black/60 border border-amber-500/40 rounded-xl px-4 py-3.5 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 font-mono tracking-wider"
-              />
-              <button
-                type="submit"
-                disabled={loading || !searchInput.trim()}
-                className="absolute right-2 top-2 bottom-2 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-bold text-xs flex items-center gap-1 transition-all"
-              >
-                {loading ? <RefreshCw size={14} className="animate-spin" /> : <span>CHECK IN</span>}
-              </button>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="e.g. Kwame, Mensah or 0244123456"
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              autoFocus
+              disabled={Boolean(selectedCandidate)}
+              className="w-full bg-black/60 border border-amber-500/40 rounded-xl px-4 py-3.5 text-sm text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 font-mono tracking-wider disabled:opacity-40"
+            />
+            {searching && (
+              <RefreshCw size={16} className="absolute right-4 top-4 text-amber-400 animate-spin" />
+            )}
+          </div>
+
+          {/* Live candidate results */}
+          {candidates.length > 0 && !selectedCandidate && (
+            <div className="mt-2 space-y-1.5 max-h-64 overflow-y-auto pr-1">
+              {candidates.map((c) => (
+                <button
+                  key={c.ticketCode}
+                  type="button"
+                  onClick={() => handlePickCandidate(c)}
+                  className="w-full flex items-center justify-between gap-2 bg-black/40 hover:bg-amber-500/10 border border-white/10 hover:border-amber-500/40 rounded-xl p-2.5 text-left transition-all"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs shrink-0">
+                      {(c.fullName || 'D')[0]}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-white text-xs leading-tight truncate">{c.title ? `${c.title} ` : ''}{c.fullName}</p>
+                      <p className="text-[10px] text-stone-400 font-mono">{c.phone} • <span className="text-amber-400">{c.ticketCode}</span></p>
+                    </div>
+                  </div>
+                  {c.checkedInToday ? (
+                    <span className="text-[9px] font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-md shrink-0">CHECKED IN</span>
+                  ) : (
+                    <ArrowRight size={14} className="text-stone-500 shrink-0" />
+                  )}
+                </button>
+              ))}
             </div>
-          </form>
+          )}
+
+          {searchInput.trim().length >= 2 && !searching && candidates.length === 0 && !selectedCandidate && (
+            <p className="text-xs text-stone-500 mt-3 text-center italic">No matching delegate found.</p>
+          )}
+
+          {/* Confirmation panel for the tapped candidate */}
+          {selectedCandidate && (
+            <div className="mt-4 p-4 rounded-xl border border-amber-500/40 bg-amber-500/10">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <User size={18} className="text-amber-300 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-sm text-white">
+                      {selectedCandidate.title ? `${selectedCandidate.title} ` : ''}{selectedCandidate.fullName}
+                    </p>
+                    <p className="text-xs text-stone-300 mt-0.5">{selectedCandidate.phone} &bull; {selectedCandidate.memberStatus}</p>
+                    <p className="text-[10px] font-mono text-amber-300 mt-0.5">{selectedCandidate.ticketCode}</p>
+                  </div>
+                </div>
+                <button onClick={handleCancelSelection} className="text-stone-400 hover:text-white p-1" title="Cancel">
+                  <X size={16} />
+                </button>
+              </div>
+
+              {selectedCandidate.checkedInToday ? (
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <p className="text-xs text-amber-200">Already checked in for {selectedDay}.</p>
+                  <button
+                    onClick={() => handleUndo(selectedCandidate.ticketCode, selectedDay)}
+                    disabled={undoingKey === `${selectedCandidate.ticketCode}|${selectedDay}`}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-600/20 border border-red-500/40 hover:bg-red-600/30 text-red-200 text-xs font-bold disabled:opacity-40"
+                  >
+                    <Undo2 size={13} /> Undo
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={handleConfirmCheckIn}
+                  disabled={confirming}
+                  className="mt-3 w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
+                >
+                  {confirming ? <RefreshCw size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                  Confirm Check-In
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Feedback Result Card */}
           {result && (
@@ -196,6 +372,16 @@ export default function Attendance() {
                       <p><strong>Status:</strong> {result.attendee.memberStatus || result.attendee.member_status}</p>
                     </div>
                   )}
+
+                  {result.success && (
+                    <button
+                      onClick={() => handleUndo(result.ticketCode, result.dayLabel)}
+                      disabled={undoingKey === `${result.ticketCode}|${result.dayLabel}`}
+                      className="mt-2.5 flex items-center gap-1.5 text-[11px] font-bold text-stone-300 hover:text-white underline disabled:opacity-40"
+                    >
+                      <Undo2 size={12} /> Undo this check-in
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -223,25 +409,38 @@ export default function Attendance() {
             </p>
           ) : (
             <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
-              {recentLogs.map((log, idx) => (
-                <div
-                  key={idx}
-                  className="bg-black/30 border border-white/5 rounded-xl p-2.5 flex items-center justify-between text-xs"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-[10px]">
-                      {(log.full_name || 'D')[0]}
+              {recentLogs.map((log, idx) => {
+                const key = `${log.ticket_code}|${selectedDay}`;
+                return (
+                  <div
+                    key={idx}
+                    className="bg-black/30 border border-white/5 rounded-xl p-2.5 flex items-center justify-between text-xs"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-[10px] shrink-0">
+                        {(log.full_name || 'D')[0]}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-white leading-tight truncate">{log.full_name || 'Registered Delegate'}</p>
+                        <p className="text-[10px] font-mono text-amber-400">{log.ticket_code}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-white leading-tight">{log.full_name || 'Registered Delegate'}</p>
-                      <p className="text-[10px] font-mono text-amber-400">{log.ticket_code}</p>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[10px] text-stone-400">
+                        {new Date(log.checkin_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      <button
+                        onClick={() => handleUndo(log.ticket_code, selectedDay)}
+                        disabled={undoingKey === key}
+                        title="Undo check-in"
+                        className="text-stone-500 hover:text-red-400 p-1 disabled:opacity-40"
+                      >
+                        <Undo2 size={13} />
+                      </button>
                     </div>
                   </div>
-                  <span className="text-[10px] text-stone-400">
-                    {new Date(log.checkin_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

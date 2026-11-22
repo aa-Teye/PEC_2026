@@ -353,6 +353,78 @@ export async function fetchAllRegistrations() {
   return getLocalRegistrations();
 }
 
+export async function searchAttendees({ term, dayLabel = '' }) {
+  const query = (term || '').trim();
+  if (query.length < 2) return [];
+
+  try {
+    const res = await fetch(`/api/attendance?search=${encodeURIComponent(query)}&day=${encodeURIComponent(dayLabel)}`);
+    if (res.ok) {
+      const json = await res.json();
+      return (json.results || []).map(r => ({
+        id: r.id,
+        ticketCode: r.ticket_code,
+        fullName: r.full_name,
+        title: r.title,
+        phone: r.phone,
+        memberStatus: r.member_status,
+        checkedInToday: Boolean(r.checkedInToday)
+      }));
+    }
+  } catch (e) {
+    console.warn('Attendance search API error, falling back to local:', e.message);
+  }
+
+  const q = query.toLowerCase();
+  const local = getLocalRegistrations();
+  const localAttLogs = JSON.parse(localStorage.getItem(ATTENDANCE_KEY) || '[]');
+  return local
+    .filter(r =>
+      (r.phone || '').includes(query) ||
+      (r.fullName || '').toLowerCase().includes(q) ||
+      (r.ticketCode || '').toLowerCase().includes(q)
+    )
+    .slice(0, 15)
+    .map(r => ({
+      id: r.id,
+      ticketCode: r.ticketCode,
+      fullName: r.fullName,
+      title: r.title,
+      phone: r.phone,
+      memberStatus: r.memberStatus,
+      checkedInToday: localAttLogs.some(l => l.ticket_code === r.ticketCode && l.day_label === dayLabel)
+    }));
+}
+
+export async function undoCheckIn({ ticketCode, dayLabel }) {
+  try {
+    const res = await fetch('/api/attendance', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticketCode, dayLabel })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    console.warn('Undo check-in API error, falling back to local:', e.message);
+  }
+
+  const attLogs = JSON.parse(localStorage.getItem(ATTENDANCE_KEY) || '[]');
+  const filtered = attLogs.filter(l => !(l.ticket_code === ticketCode && l.day_label === dayLabel));
+  localStorage.setItem(ATTENDANCE_KEY, JSON.stringify(filtered));
+
+  const local = getLocalRegistrations();
+  const stillCheckedIn = filtered.some(l => l.ticket_code === ticketCode);
+  const idx = local.findIndex(r => r.ticketCode === ticketCode);
+  if (idx >= 0) {
+    local[idx].checkedIn = stillCheckedIn;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(local));
+  }
+
+  return { success: true, removed: true, message: `Check-in undone locally for ${dayLabel}` };
+}
+
 export async function checkInAttendee({ ticketCode, phone, dayLabel = 'Day 1' }) {
   try {
     const res = await fetch('/api/attendance', {
@@ -360,12 +432,13 @@ export async function checkInAttendee({ ticketCode, phone, dayLabel = 'Day 1' })
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ticketCode, phone, dayLabel })
     });
-    if (res.ok) {
-      const json = await res.json();
+    const json = await res.json();
+    if (res.status !== 503) {
+      // Server reached and gave a real answer (success, already-checked-in, not-found, or a genuine error) — trust it.
       return json;
     }
   } catch (e) {
-    console.warn("Attendance API error, falling back to local:", e.message);
+    console.warn("Attendance API unreachable, falling back to local:", e.message);
   }
 
   const local = getLocalRegistrations();
