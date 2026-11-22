@@ -39,6 +39,12 @@ export default function Admin() {
   const [transportFilter, setTransportFilter] = useState('ALL');
   const [firstTimerFilter, setFirstTimerFilter] = useState('ALL');
   const [attendanceSummary, setAttendanceSummary] = useState([]);
+  const [rosterDay, setRosterDay] = useState(DAYS_OF_CONVENTION[0]?.id || '');
+  const [rosterLogs, setRosterLogs] = useState([]);
+  const [rosterSearch, setRosterSearch] = useState('');
+  const [loadingRoster, setLoadingRoster] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [prayerTabSearch, setPrayerTabSearch] = useState('');
 
   const [selectedAttendee, setSelectedAttendee] = useState(null);
   const [selectedPrayer, setSelectedPrayer] = useState(null);
@@ -93,6 +99,25 @@ export default function Admin() {
     }
     return () => document.body.classList.remove('full-width-page');
   }, [authenticated]);
+
+  useEffect(() => {
+    if (!authenticated || !rosterDay) return;
+    const loadRosterLogs = async () => {
+      setLoadingRoster(true);
+      try {
+        const res = await fetch(`/api/attendance?day=${encodeURIComponent(rosterDay)}`);
+        if (res.ok) {
+          const json = await res.json();
+          setRosterLogs(json.logs || []);
+        }
+      } catch (e) {
+        console.error('Could not load day roster:', e);
+      } finally {
+        setLoadingRoster(false);
+      }
+    };
+    loadRosterLogs();
+  }, [authenticated, rosterDay]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -265,6 +290,40 @@ export default function Admin() {
     .map(([status, count]) => ({ status, count }))
     .sort((a, b) => b.count - a.count);
 
+  // Everyone who registered to attend the selected day, cross-checked against who actually checked in
+  const checkedInTicketsForRosterDay = new Set(rosterLogs.map(l => l.ticket_code));
+  const rosterTerm = rosterSearch.trim().toLowerCase();
+  const dayRoster = registrations
+    .filter(r => Array.isArray(r.attendanceDays) && r.attendanceDays.includes(rosterDay))
+    .filter(r =>
+      !rosterTerm ||
+      (r.fullName || '').toLowerCase().includes(rosterTerm) ||
+      (r.phone || '').includes(rosterTerm)
+    )
+    .map(r => {
+      const log = rosterLogs.find(l => l.ticket_code === r.ticketCode);
+      return { ...r, dayCheckedIn: Boolean(log), dayCheckinTime: log?.checkin_time || null };
+    })
+    .sort((a, b) => {
+      if (a.dayCheckedIn !== b.dayCheckedIn) return a.dayCheckedIn ? 1 : -1;
+      return (a.fullName || '').localeCompare(b.fullName || '');
+    });
+
+  const rosterExpectedCount = registrations.filter(r => Array.isArray(r.attendanceDays) && r.attendanceDays.includes(rosterDay)).length;
+  const rosterCheckedInCount = registrations.filter(r => Array.isArray(r.attendanceDays) && r.attendanceDays.includes(rosterDay) && checkedInTicketsForRosterDay.has(r.ticketCode)).length;
+  const rosterNoShowCount = rosterExpectedCount - rosterCheckedInCount;
+
+  const recentRegistrations = [...registrations]
+    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+    .slice(0, 5);
+
+  const prayerTabTerm = prayerTabSearch.trim().toLowerCase();
+  const filteredPrayerRegs = prayerRegs.filter(r =>
+    !prayerTabTerm ||
+    (r.fullName || '').toLowerCase().includes(prayerTabTerm) ||
+    (r.prayerRequest || '').toLowerCase().includes(prayerTabTerm)
+  );
+
   if (!authenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a0103]">
@@ -359,6 +418,35 @@ export default function Admin() {
         </div>
       </div>
 
+      {/* Tab Navigation */}
+      <div className="flex gap-2 overflow-x-auto pb-1 mt-5 mb-1 scrollbar-none">
+        {[
+          { id: 'overview', label: 'Overview', icon: BarChart3 },
+          { id: 'roster', label: 'Day Roster', icon: UserCheck },
+          { id: 'prayer', label: 'Prayer Requests', icon: Heart },
+          { id: 'registrations', label: 'Registrations', icon: Users }
+        ].map(tab => {
+          const TabIcon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+                activeTab === tab.id
+                  ? 'bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/30'
+                  : 'bg-black/30 text-stone-300 border-white/10 hover:border-amber-500/30'
+              }`}
+            >
+              <TabIcon size={13} />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {activeTab === 'overview' && (
+      <>
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 my-6">
         <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
@@ -512,32 +600,222 @@ export default function Admin() {
           {prayerRegs.length === 0 ? (
             <p className="text-xs text-stone-500 py-8 text-center italic">No prayer requests submitted yet.</p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[260px] overflow-y-auto pr-1">
-              {prayerRegs.slice(0, 8).map((r) => {
-                const initials = (r.fullName || '??').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-                return (
-                  <button
-                    key={r.ticketCode}
-                    onClick={() => setSelectedPrayer(r)}
-                    className="text-left bg-black/30 hover:bg-pink-500/5 border border-white/10 hover:border-pink-500/30 rounded-xl p-3 transition-colors"
-                  >
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <div className="w-6 h-6 rounded-full bg-pink-500/20 text-pink-200 flex items-center justify-center text-[9px] font-black shrink-0">
-                        {initials}
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {prayerRegs.slice(0, 5).map((r) => {
+                  const initials = (r.fullName || '??').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                  return (
+                    <button
+                      key={r.ticketCode}
+                      onClick={() => setSelectedPrayer(r)}
+                      className="text-left bg-black/30 hover:bg-pink-500/5 border border-white/10 hover:border-pink-500/30 rounded-xl p-3 transition-colors"
+                    >
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <div className="w-6 h-6 rounded-full bg-pink-500/20 text-pink-200 flex items-center justify-center text-[9px] font-black shrink-0">
+                          {initials}
+                        </div>
+                        <span className="text-[11px] font-bold text-white truncate">{r.fullName}</span>
                       </div>
-                      <span className="text-[11px] font-bold text-white truncate">{r.fullName}</span>
-                    </div>
-                    <p className="text-[11px] text-stone-400 italic leading-relaxed line-clamp-2">
-                      "{r.prayerRequest}"
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+                      <p className="text-[11px] text-stone-400 italic leading-relaxed line-clamp-2">
+                        "{r.prayerRequest}"
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+              {prayerRegs.length > 5 && (
+                <button
+                  onClick={() => setActiveTab('prayer')}
+                  className="mt-3 w-full py-2 rounded-xl bg-pink-500/10 border border-pink-500/30 hover:bg-pink-500/20 text-pink-200 text-[11px] font-bold uppercase tracking-wider"
+                >
+                  View All {prayerRegs.length} Prayer Requests →
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>
 
+      {/* Recent Registrations preview */}
+      <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Users size={12} className="text-amber-400" /> Recent Registrations
+          </span>
+          <span className="text-[10px] font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">
+            {totalCount} total
+          </span>
+        </div>
+
+        {recentRegistrations.length === 0 ? (
+          <p className="text-xs text-stone-500 py-8 text-center italic">No registrations yet.</p>
+        ) : (
+          <div className="divide-y divide-white/5 border border-white/10 rounded-xl mb-3">
+            {recentRegistrations.map(r => (
+              <div key={r.ticketCode} className="flex items-center justify-between gap-2 px-3 py-2.5 text-xs">
+                <div className="min-w-0">
+                  <p className="font-bold text-white truncate">{r.title ? `${r.title} ` : ''}{r.fullName}</p>
+                  <p className="text-[10px] text-stone-400 font-mono">{r.phone}</p>
+                </div>
+                <span className="font-mono font-bold text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] shrink-0">
+                  {r.ticketCode}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <button
+          onClick={() => setActiveTab('registrations')}
+          className="w-full py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 text-amber-200 text-[11px] font-bold uppercase tracking-wider"
+        >
+          View All {totalCount} Registrations →
+        </button>
+      </div>
+      </>
+      )}
+
+      {activeTab === 'roster' && (
+      <>
+      {/* Day Roster - who's expected each day vs who actually checked in */}
+      <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <Users size={15} className="text-amber-400" />
+          <h2 className="font-cinzel font-black text-sm text-white uppercase tracking-wider">Day Roster</h2>
+          <span className="text-[10px] text-stone-500">Who's coming &amp; who showed</span>
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-1 mb-3.5 scrollbar-none">
+          {DAYS_OF_CONVENTION.map(d => (
+            <button
+              key={d.id}
+              type="button"
+              onClick={() => setRosterDay(d.id)}
+              className={`px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+                rosterDay === d.id
+                  ? 'bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/30'
+                  : 'bg-black/40 text-stone-300 border-white/10 hover:border-amber-500/30'
+              }`}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-3 gap-2.5 mb-3.5">
+          <div className="bg-black/30 border border-white/10 rounded-xl p-3 text-center">
+            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">Expected</span>
+            <span className="text-xl font-mono font-black text-white mt-0.5 block">{rosterExpectedCount}</span>
+          </div>
+          <div className="bg-black/30 border border-emerald-500/20 rounded-xl p-3 text-center">
+            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">Checked In</span>
+            <span className="text-xl font-mono font-black text-emerald-400 mt-0.5 block">{rosterCheckedInCount}</span>
+          </div>
+          <div className="bg-black/30 border border-red-500/20 rounded-xl p-3 text-center">
+            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">No-Show (so far)</span>
+            <span className="text-xl font-mono font-black text-red-400 mt-0.5 block">{rosterNoShowCount}</span>
+          </div>
+        </div>
+
+        <div className="relative mb-3">
+          <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+          <input
+            type="text"
+            placeholder="Search this day's roster by name or phone..."
+            value={rosterSearch}
+            onChange={e => setRosterSearch(e.target.value)}
+            className="w-full bg-black/40 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-400"
+          />
+        </div>
+
+        {loadingRoster ? (
+          <p className="text-xs text-stone-500 py-6 text-center italic">Loading check-ins for this day...</p>
+        ) : dayRoster.length === 0 ? (
+          <p className="text-xs text-stone-500 py-6 text-center italic">
+            {rosterExpectedCount === 0 ? 'No one registered to attend this day.' : 'No matches in this day\'s roster.'}
+          </p>
+        ) : (
+          <div className="divide-y divide-white/5 max-h-80 overflow-y-auto border border-white/10 rounded-xl">
+            {dayRoster.map(r => (
+              <div key={r.ticketCode} className="flex items-center justify-between gap-2 px-3 py-2.5 text-xs">
+                <div className="min-w-0">
+                  <p className="font-bold text-white truncate">{r.title ? `${r.title} ` : ''}{r.fullName}</p>
+                  <p className="text-[10px] text-stone-400 font-mono">{r.phone} &bull; {r.ticketCode}</p>
+                </div>
+                {r.dayCheckedIn ? (
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-2 py-1 rounded-full shrink-0">
+                    <CheckCircle2 size={11} />
+                    Checked In{r.dayCheckinTime ? ` ${new Date(r.dayCheckinTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-red-300 bg-red-500/10 border border-red-500/30 px-2 py-1 rounded-full shrink-0">
+                    <XCircle size={11} />
+                    Not Checked In
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      </>
+      )}
+
+      {activeTab === 'prayer' && (
+      <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-bold text-stone-200 uppercase tracking-wider flex items-center gap-1.5">
+            <Heart size={14} className="text-pink-400" /> All Prayer Points & Petitions
+          </span>
+          <span className="text-[10px] font-bold text-pink-300 bg-pink-500/10 border border-pink-500/30 px-2 py-0.5 rounded-full">
+            {prayerRegs.length} total
+          </span>
+        </div>
+
+        <div className="relative mb-3.5">
+          <Search size={14} className="absolute left-3 top-2.5 text-stone-400" />
+          <input
+            type="text"
+            placeholder="Search prayer requests by name or keyword..."
+            value={prayerTabSearch}
+            onChange={e => setPrayerTabSearch(e.target.value)}
+            className="w-full bg-black/40 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-400"
+          />
+        </div>
+
+        {filteredPrayerRegs.length === 0 ? (
+          <p className="text-xs text-stone-500 py-10 text-center italic">
+            {prayerRegs.length === 0 ? 'No prayer requests submitted yet.' : 'No prayer requests match your search.'}
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {filteredPrayerRegs.map((r) => {
+              const initials = (r.fullName || '??').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+              return (
+                <button
+                  key={r.ticketCode}
+                  onClick={() => setSelectedPrayer(r)}
+                  className="text-left bg-black/30 hover:bg-pink-500/5 border border-white/10 hover:border-pink-500/30 rounded-xl p-3 transition-colors"
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="w-6 h-6 rounded-full bg-pink-500/20 text-pink-200 flex items-center justify-center text-[9px] font-black shrink-0">
+                      {initials}
+                    </div>
+                    <span className="text-[11px] font-bold text-white truncate">{r.fullName}</span>
+                  </div>
+                  <p className="text-[11px] text-stone-400 italic leading-relaxed line-clamp-2">
+                    "{r.prayerRequest}"
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      )}
+
+      {activeTab === 'registrations' && (
+      <>
       {/* Filter & Search Bar */}
       <div className="bg-[#130306] border border-white/10 rounded-2xl p-4 mb-6 space-y-3">
         <div className="flex flex-col sm:flex-row gap-3">
@@ -681,6 +959,8 @@ export default function Admin() {
           </table>
         </div>
       </div>
+      </>
+      )}
 
       {/* Delegate Badge Modal */}
       {selectedAttendee && (
