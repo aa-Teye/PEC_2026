@@ -762,6 +762,8 @@ export default function Admin() {
             {dayRoster.map(r => (
               <div key={r.ticketCode} className="flex items-center justify-between gap-2 px-3 py-2.5 text-xs">
                 <div className="min-w-0">
+                  <p className="font-bold text-white truncate flex items-center gap-1.5">
+                    {r.title ? `${r.title} ` : ''}{r.fullName}
                   <p className="font-bold text-white truncate">{r.title ? `${r.title} ` : ''}{r.fullName}</p>
                   <p className="text-[10px] text-stone-400 font-mono">{r.phone} &bull; {r.ticketCode}</p>
                 </div>
