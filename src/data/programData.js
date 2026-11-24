@@ -371,6 +371,8 @@ export async function searchAttendees({ term, dayLabel = '' }) {
         title: r.title,
         phone: r.phone,
         memberStatus: r.member_status,
+        attendeeType: r.attendee_type || 'Adult',
+        guardianName: r.guardian_name,
         checkedInToday: Boolean(r.checkedInToday)
       }));
     }
