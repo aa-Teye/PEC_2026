@@ -276,7 +276,8 @@ export default function Attendance() {
                         {c.title ? `${c.title} ` : ''}{c.fullName}
                         {c.attendeeType === 'Child' && (
                           <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-sky-300 bg-sky-500/10 border border-sky-500/30 px-1.5 py-0.5 rounded-full shrink-0">
-                      <p className="font-bold text-white text-xs leading-tight truncate">{c.title ? `${c.title} ` : ''}{c.fullName}</p>
+                            <Baby size={9} /> Child
+                          </span>
                       <p className="text-[10px] text-stone-400 font-mono">{c.phone} • <span className="text-amber-400">{c.ticketCode}</span></p>
                     </div>
                   </div>
