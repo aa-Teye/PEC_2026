@@ -154,7 +154,7 @@ export default function Admin() {
     if (registrations.length === 0) return alert('No registrations to export');
 
     const headers = [
-      'Ticket Code', 'Title', 'Full Name', 'Phone', 'Email',
+      'Ticket Code', 'Attendee Type', 'Title', 'Full Name', 'Age', 'Guardian Name', 'Phone', 'Email',
       'Gender', 'Member Status', 'First Timer',
       'Days Attending', 'Mode', 'Needs Transport', 'Location',
       'Invited By', 'Prayer Request', 'Registered At'
