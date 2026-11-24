@@ -165,6 +165,8 @@ export default function Admin() {
       `"${r.attendeeType || 'Adult'}"`,
       `"${r.title || ''}"`,
       `"${(r.fullName || '').replace(/"/g, '""')}"`,
+      `"${r.ageGroup || ''}"`,
+      `"${(r.guardianName || '').replace(/"/g, '""')}"`,
       `"${r.phone || ''}"`,
       `"${r.email || ''}"`,
       `"${r.gender || ''}"`,
