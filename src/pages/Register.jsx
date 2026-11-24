@@ -261,8 +261,8 @@ export default function Register() {
             <User size={14} /> Personal Details
           </h2>
 
-          <div className="grid grid-cols-3 gap-2">
-            <div>
+          <div>
+            <label className="block text-[11px] font-semibold text-stone-300 mb-1.5">Who Are You Registering?</label>
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">Title</label>
               <select
                 value={form.title}
