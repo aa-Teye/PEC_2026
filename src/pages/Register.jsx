@@ -301,6 +301,9 @@ export default function Register() {
                   ))}
                 </select>
               </div>
+            )}
+            <div className={form.attendeeType === 'Child' ? '' : 'col-span-2'}>
+              <label className="block text-[11px] font-semibold text-stone-300 mb-1">
               <input
                 type="text"
                 placeholder="e.g. Samuel Mensah"
