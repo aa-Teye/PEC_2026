@@ -127,6 +127,7 @@ export default async function handler(req, res) {
               title = COALESCE(NULLIF(${title}, ''), title),
               email = COALESCE(NULLIF(${email}, ''), email),
               gender = COALESCE(NULLIF(${gender}, ''), gender),
+              age_group = COALESCE(NULLIF(${ageGroup}, ''), age_group),
               member_status = COALESCE(NULLIF(${memberStatus}, ''), member_status),
               attendance_days = ${attendanceDaysStr},
               location = COALESCE(NULLIF(${location}, ''), location),
