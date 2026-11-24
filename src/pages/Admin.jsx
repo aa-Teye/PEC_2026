@@ -935,7 +935,7 @@ export default function Admin() {
                 filtered.map((reg) => (
                   <tr key={reg.ticketCode} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-3 px-4">
-                      <div className="font-bold text-white">
+                      <div className="font-bold text-white flex items-center gap-1.5">
                         {reg.title ? `${reg.title} ` : ''}{reg.fullName}
                       </div>
                       {reg.email && <div className="text-[10px] text-stone-400">{reg.email}</div>}
