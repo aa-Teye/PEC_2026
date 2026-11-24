@@ -945,6 +945,7 @@ export default function Admin() {
                       </div>
                       {reg.attendeeType === 'Child' && reg.guardianName && (
                         <div className="text-[10px] text-stone-400">Guardian: {reg.guardianName}</div>
+                      )}
                       {reg.email && <div className="text-[10px] text-stone-400">{reg.email}</div>}
                     </td>
                     <td className="py-3 px-4">
