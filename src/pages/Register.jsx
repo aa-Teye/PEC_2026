@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import {
   User, Phone, Mail, MapPin, Calendar, Heart, Shield,
-  CheckCircle2, ArrowRight, Loader2, Car, Users, MessageSquare
+  CheckCircle2, ArrowRight, Loader2, Car, Users, MessageSquare, Baby
 } from 'lucide-react';
 import { PROGRAM_DATA, DAYS_OF_CONVENTION, TITLES, saveRegistration } from '../data/programData';
 
