@@ -454,7 +454,7 @@ export default function Admin() {
       {activeTab === 'overview' && (
       <>
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 my-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 my-6">
         <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
           <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider block">
             Total Registered
