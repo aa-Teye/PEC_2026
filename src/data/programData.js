@@ -324,6 +324,7 @@ export async function fetchAllRegistrations() {
           phone: r.phone,
           email: r.email,
           gender: r.gender,
+          ageGroup: r.age_group,
           memberStatus: r.member_status,
           firstTimer: r.first_timer,
           referral: r.referral,
