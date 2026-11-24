@@ -764,6 +764,8 @@ export default function Admin() {
                 <div className="min-w-0">
                   <p className="font-bold text-white truncate flex items-center gap-1.5">
                     {r.title ? `${r.title} ` : ''}{r.fullName}
+                    {r.attendeeType === 'Child' && (
+                      <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-sky-300 bg-sky-500/10 border border-sky-500/30 px-1.5 py-0.5 rounded-full shrink-0">
                   <p className="font-bold text-white truncate">{r.title ? `${r.title} ` : ''}{r.fullName}</p>
                   <p className="text-[10px] text-stone-400 font-mono">{r.phone} &bull; {r.ticketCode}</p>
                 </div>
