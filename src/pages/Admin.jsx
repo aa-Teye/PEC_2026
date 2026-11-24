@@ -892,6 +892,9 @@ export default function Admin() {
             </select>
 
             <select
+              value={typeFilter}
+              onChange={e => setTypeFilter(e.target.value)}
+              className="bg-black/40 border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
           </div>
         </div>
 
