@@ -285,6 +285,9 @@ export default function Register() {
             </div>
           </div>
 
+          <div className={form.attendeeType === 'Child' ? 'grid grid-cols-1 gap-2' : 'grid grid-cols-3 gap-2'}>
+            {form.attendeeType !== 'Child' && (
+              <div>
             <div className="col-span-2">
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">Full Name *</label>
               <input
