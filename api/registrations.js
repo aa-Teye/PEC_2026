@@ -143,7 +143,8 @@ export default async function handler(req, res) {
           INSERT INTO pec_registrations (
             ticket_code, title, full_name, phone, email, gender, age_group,
             member_status, first_timer, referral, attendance_days,
-            attendance_mode, prayer_request, location, invited_by, needs_transport, sms_sent
+            attendance_mode, prayer_request, location, invited_by, needs_transport, sms_sent,
+            attendee_type, guardian_name
           ) VALUES (
             ${code}, ${title}, ${cleanName}, ${phone}, ${email}, ${gender}, ${ageGroup},
             ${memberStatus}, ${firstTimer}, ${referral}, ${attendanceDaysStr},
