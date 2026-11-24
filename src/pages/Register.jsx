@@ -273,7 +273,8 @@ export default function Register() {
                   type="button"
                   onClick={() => setAttendeeType(opt.val)}
                   className={`py-2.5 px-3 flex items-center justify-center gap-1.5 text-xs rounded-xl border transition-all font-bold ${
-                {TITLES.map(t => (
+                    form.attendeeType === opt.val
+                      ? 'bg-amber-500 text-black border-amber-400'
                   <option key={t.val} value={t.val} className="bg-[#120306] text-white">
                     {t.label}
                   </option>
