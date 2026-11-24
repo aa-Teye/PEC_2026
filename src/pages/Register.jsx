@@ -195,7 +195,7 @@ export default function Register() {
               <div>
                 <span className="text-[10px] text-stone-400 block font-semibold">
                   {registeredAttendee.attendeeType === 'Child' ? 'Guardian Phone' : 'Phone'}
-                <span className="text-[10px] text-stone-400 block font-semibold">Phone</span>
+                </span>
                 <span className="font-bold text-white">{registeredAttendee.phone}</span>
               </div>
             </div>
