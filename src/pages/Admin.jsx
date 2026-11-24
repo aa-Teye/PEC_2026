@@ -674,7 +674,8 @@ export default function Admin() {
                     {r.title ? `${r.title} ` : ''}{r.fullName}
                     {r.attendeeType === 'Child' && (
                       <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-sky-300 bg-sky-500/10 border border-sky-500/30 px-1.5 py-0.5 rounded-full shrink-0">
-                  <p className="font-bold text-white truncate">{r.title ? `${r.title} ` : ''}{r.fullName}</p>
+                        <Baby size={9} /> Child
+                      </span>
                   <p className="text-[10px] text-stone-400 font-mono">{r.phone}</p>
                 </div>
                 <span className="font-mono font-bold text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] shrink-0">
