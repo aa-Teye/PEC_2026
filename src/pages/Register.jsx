@@ -53,6 +53,8 @@ export default function Register() {
     }));
   };
 
+  const setAttendeeType = (type) => {
+    setForm(prev => ({
   const validate = () => {
     const errs = {};
     if (!form.fullName.trim()) errs.fullName = 'Full Name is required';
