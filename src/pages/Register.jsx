@@ -331,6 +331,9 @@ export default function Register() {
                   value={form.ageGroup}
                   onChange={e => setForm({ ...form, ageGroup: e.target.value })}
                   className={`w-full bg-black/40 border rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none ${
+                    errors.ageGroup ? 'border-red-500' : 'border-white/10 focus:border-amber-400'
+                  }`}
+                />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">
