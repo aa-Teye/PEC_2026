@@ -61,6 +61,8 @@ export default function Register() {
       ageGroup: type === 'Child' ? prev.ageGroup : '',
       guardianName: type === 'Child' ? prev.guardianName : ''
     }));
+  };
+
   const validate = () => {
     const errs = {};
     if (!form.fullName.trim()) errs.fullName = 'Full Name is required';
