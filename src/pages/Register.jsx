@@ -8,6 +8,7 @@ import {
 import { PROGRAM_DATA, DAYS_OF_CONVENTION, TITLES, saveRegistration } from '../data/programData';
 
 const INIT_FORM = {
+  attendeeType: 'Adult',
   title: 'Mr',
   fullName: '',
   phone: '',
