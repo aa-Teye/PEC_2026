@@ -292,6 +292,9 @@ export default function Register() {
                 <select
                   value={form.title}
                   onChange={e => setForm({ ...form, title: e.target.value })}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400"
+                >
+                  {TITLES.map(t => (
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">Full Name *</label>
               <input
                 type="text"
