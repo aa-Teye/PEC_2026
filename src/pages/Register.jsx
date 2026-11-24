@@ -55,6 +55,9 @@ export default function Register() {
 
   const setAttendeeType = (type) => {
     setForm(prev => ({
+      ...prev,
+      attendeeType: type,
+      title: type === 'Child' ? '' : (prev.title || 'Mr'),
   const validate = () => {
     const errs = {};
     if (!form.fullName.trim()) errs.fullName = 'Full Name is required';
