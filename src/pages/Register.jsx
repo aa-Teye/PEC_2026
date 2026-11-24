@@ -327,6 +327,8 @@ export default function Register() {
                   type="number"
                   min="0"
                   max="17"
+                  placeholder="e.g. 7"
+                  value={form.ageGroup}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">
