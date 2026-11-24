@@ -341,6 +341,9 @@ export default function Register() {
                 <input
                   type="text"
                   placeholder="e.g. Samuel Mensah"
+                  value={form.guardianName}
+                  onChange={e => setForm({ ...form, guardianName: e.target.value })}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-400"
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">
