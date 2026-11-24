@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   UserCheck, Search, CheckCircle2, AlertCircle, Clock,
-  Calendar, RefreshCw, User, ArrowRight, Lock, X, Undo2
+  Calendar, RefreshCw, User, ArrowRight, Lock, X, Undo2, Baby
 } from 'lucide-react';
 import { DAYS_OF_CONVENTION, checkInAttendee, searchAttendees, undoCheckIn } from '../data/programData';
 
