@@ -157,6 +157,9 @@ export default function Register() {
             </h2>
             {(registeredAttendee.attendeeType === 'Child') && (
               <p className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-200 text-[10px] font-bold uppercase tracking-wider mb-1">
+                <Baby size={11} /> Child{registeredAttendee.ageGroup ? ` • Age ${registeredAttendee.ageGroup}` : ''}
+              </p>
+            )}
             <p className="text-xs text-amber-300 font-semibold tracking-wide">
               PEC: THIS SAME JESUS (Acts 1:11)
             </p>
