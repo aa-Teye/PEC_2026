@@ -280,8 +280,8 @@ export default function Register() {
                 >
                   <opt.icon size={14} />
                   {opt.label}
-                ))}
-              </select>
+                </button>
+              ))}
             </div>
             <div className="col-span-2">
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">Full Name *</label>
