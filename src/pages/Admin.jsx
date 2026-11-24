@@ -38,6 +38,7 @@ export default function Admin() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [transportFilter, setTransportFilter] = useState('ALL');
   const [firstTimerFilter, setFirstTimerFilter] = useState('ALL');
+  const [typeFilter, setTypeFilter] = useState('ALL');
   const [attendanceSummary, setAttendanceSummary] = useState([]);
   const [rosterDay, setRosterDay] = useState(DAYS_OF_CONVENTION[0]?.id || '');
   const [rosterLogs, setRosterLogs] = useState([]);
