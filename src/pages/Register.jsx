@@ -202,6 +202,8 @@ export default function Register() {
                 <div className="col-span-2">
                   <span className="text-[10px] text-stone-400 block font-semibold">Parent / Guardian</span>
                   <span className="font-bold text-white">{registeredAttendee.guardianName}</span>
+                </div>
+              )}
             </div>
 
             <div className="p-3 bg-white/5 border border-amber-500/20 rounded-xl flex items-start gap-2.5 text-xs text-stone-300">
