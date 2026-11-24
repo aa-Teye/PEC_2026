@@ -263,7 +263,9 @@ export default function Register() {
 
           <div>
             <label className="block text-[11px] font-semibold text-stone-300 mb-1.5">Who Are You Registering?</label>
-              <label className="block text-[11px] font-semibold text-stone-300 mb-1">Title</label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { val: 'Adult', label: 'Adult', icon: User },
               <select
                 value={form.title}
                 onChange={e => setForm({ ...form, title: e.target.value })}
