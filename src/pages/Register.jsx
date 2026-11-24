@@ -277,7 +277,9 @@ export default function Register() {
                       ? 'bg-amber-500 text-black border-amber-400'
                       : 'bg-black/30 border-white/10 text-stone-300'
                   }`}
-                  </option>
+                >
+                  <opt.icon size={14} />
+                  {opt.label}
                 ))}
               </select>
             </div>
