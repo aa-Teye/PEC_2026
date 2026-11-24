@@ -334,6 +334,8 @@ export async function fetchAllRegistrations() {
           location: r.location,
           invitedBy: r.invited_by,
           needsTransport: r.needs_transport,
+          attendeeType: r.attendee_type || 'Adult',
+          guardianName: r.guardian_name,
           checkedIn: r.checked_in,
           smsSent: r.sms_sent,
           created_at: r.created_at,
