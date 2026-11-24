@@ -73,6 +73,8 @@ export async function initDb() {
 
     // 4. Child registration support (added on top of an already-live table)
     await sql`
+      ALTER TABLE pec_registrations ADD COLUMN IF NOT EXISTS attendee_type VARCHAR(32) DEFAULT 'Adult';
+    `;
     return true;
   } catch (err) {
     console.error("Error initializing Neon database schema:", err);
