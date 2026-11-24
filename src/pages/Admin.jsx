@@ -247,6 +247,7 @@ export default function Admin() {
   const firstTimersCount = registrations.filter(r => r.firstTimer === 'yes').length;
   const transportCount = registrations.filter(r => r.needsTransport === 'yes').length;
   const membersCount = registrations.filter(r => (r.memberStatus || '').includes('Member')).length;
+  const childrenCount = registrations.filter(r => r.attendeeType === 'Child').length;
 
   const prayerRegs = registrations
     .filter(r => (r.prayerRequest || '').trim().length > 0)
