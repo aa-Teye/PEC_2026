@@ -339,6 +339,8 @@ export default function Register() {
               <div>
                 <label className="block text-[11px] font-semibold text-stone-300 mb-1">Parent / Guardian Name</label>
                 <input
+                  type="text"
+                  placeholder="e.g. Samuel Mensah"
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">
