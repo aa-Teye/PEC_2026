@@ -270,8 +270,9 @@ export default function Register() {
               ].map(opt => (
                 <button
                   key={opt.val}
-                className="w-full bg-black/40 border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400"
-              >
+                  type="button"
+                  onClick={() => setAttendeeType(opt.val)}
+                  className={`py-2.5 px-3 flex items-center justify-center gap-1.5 text-xs rounded-xl border transition-all font-bold ${
                 {TITLES.map(t => (
                   <option key={t.val} value={t.val} className="bg-[#120306] text-white">
                     {t.label}
