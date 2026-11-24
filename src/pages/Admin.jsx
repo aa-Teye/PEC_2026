@@ -511,6 +511,8 @@ export default function Admin() {
           </span>
           <span className="text-3xl font-mono font-black text-sky-300 mt-1 block">
             {childrenCount}
+          </span>
+          <span className="text-[10px] text-stone-500 mt-1 block">Registered as Child</span>
         </div>
       </div>
 
