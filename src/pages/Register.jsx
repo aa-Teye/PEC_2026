@@ -299,7 +299,8 @@ export default function Register() {
                       {t.label}
                     </option>
                   ))}
-              <label className="block text-[11px] font-semibold text-stone-300 mb-1">Full Name *</label>
+                </select>
+              </div>
               <input
                 type="text"
                 placeholder="e.g. Samuel Mensah"
