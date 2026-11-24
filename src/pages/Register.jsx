@@ -65,7 +65,8 @@ export default function Register() {
 
   const validate = () => {
     const errs = {};
-    if (!form.fullName.trim()) errs.fullName = 'Full Name is required';
+    if (!form.fullName.trim()) errs.fullName = form.attendeeType === 'Child' ? "Child's Full Name is required" : 'Full Name is required';
+    if (!form.phone.trim()) errs.phone = form.attendeeType === 'Child' ? "Parent/Guardian Phone Number is required" : 'Valid Phone Number is required';
     if (!form.phone.trim()) errs.phone = 'Valid Phone Number is required';
     if (form.attendanceDays.length === 0) errs.attendanceDays = 'Select at least one day';
     setErrors(errs);
