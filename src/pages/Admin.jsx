@@ -240,7 +240,7 @@ export default function Admin() {
     const matchFirstTimer = firstTimerFilter === 'ALL' || r.firstTimer === firstTimerFilter;
     const matchType = typeFilter === 'ALL' || (r.attendeeType || 'Adult') === typeFilter;
 
-    return matchSearch && matchStatus && matchTransport && matchFirstTimer;
+    return matchSearch && matchStatus && matchTransport && matchFirstTimer && matchType;
   });
 
   const totalCount = registrations.length;
