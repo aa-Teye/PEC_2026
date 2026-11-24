@@ -14,6 +14,8 @@ const INIT_FORM = {
   phone: '',
   email: '',
   gender: 'Male',
+  ageGroup: '',
+  guardianName: '',
   memberStatus: 'Visitor / Guest',
   firstTimer: 'no',
   referral: '',
