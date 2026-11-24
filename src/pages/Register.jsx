@@ -67,7 +67,7 @@ export default function Register() {
     const errs = {};
     if (!form.fullName.trim()) errs.fullName = form.attendeeType === 'Child' ? "Child's Full Name is required" : 'Full Name is required';
     if (!form.phone.trim()) errs.phone = form.attendeeType === 'Child' ? "Parent/Guardian Phone Number is required" : 'Valid Phone Number is required';
-    if (!form.phone.trim()) errs.phone = 'Valid Phone Number is required';
+    if (form.attendeeType === 'Child' && !String(form.ageGroup).trim()) errs.ageGroup = "Child's Age is required";
     if (form.attendanceDays.length === 0) errs.attendanceDays = 'Select at least one day';
     setErrors(errs);
     return Object.keys(errs).length === 0;
