@@ -71,6 +71,8 @@ export async function initDb() {
       CREATE INDEX IF NOT EXISTS idx_pec_reg_phone ON pec_registrations (phone);
     `;
 
+    // 4. Child registration support (added on top of an already-live table)
+    await sql`
     return true;
   } catch (err) {
     console.error("Error initializing Neon database schema:", err);
