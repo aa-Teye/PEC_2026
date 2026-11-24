@@ -131,6 +131,8 @@ export default async function handler(req, res) {
               member_status = COALESCE(NULLIF(${memberStatus}, ''), member_status),
               attendance_days = ${attendanceDaysStr},
               location = COALESCE(NULLIF(${location}, ''), location),
+              attendee_type = COALESCE(NULLIF(${attendeeType}, ''), attendee_type),
+              guardian_name = COALESCE(NULLIF(${guardianName}, ''), guardian_name),
               updated_at = CURRENT_TIMESTAMP
           WHERE id = ${existing[0].id}
           RETURNING *;
