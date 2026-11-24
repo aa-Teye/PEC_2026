@@ -505,6 +505,9 @@ export default function Admin() {
           <span className="text-[10px] text-stone-500 mt-1 block">Intercessory Queue</span>
         </div>
 
+        <div className="bg-[#150407] border border-amber-500/20 rounded-2xl p-4 shadow-lg">
+          <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Baby size={11} className="text-sky-400" /> Children
         </div>
       </div>
 
