@@ -308,7 +308,7 @@ export default function Register() {
               </label>
               <input
                 type="text"
-                placeholder="e.g. Samuel Mensah"
+                placeholder={form.attendeeType === 'Child' ? 'e.g. Abena Mensah' : 'e.g. Samuel Mensah'}
                 value={form.fullName}
                 onChange={e => setForm({ ...form, fullName: e.target.value })}
                 className={`w-full bg-black/40 border rounded-xl px-3 py-2 text-xs text-white placeholder-stone-500 focus:outline-none ${
