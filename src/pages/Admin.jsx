@@ -504,6 +504,8 @@ export default function Admin() {
           </span>
           <span className="text-[10px] text-stone-500 mt-1 block">Intercessory Queue</span>
         </div>
+
+        </div>
       </div>
 
       {/* Analytics & Insights */}
