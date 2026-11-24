@@ -162,6 +162,7 @@ export default function Admin() {
 
     const rows = registrations.map(r => [
       `"${r.ticketCode || ''}"`,
+      `"${r.attendeeType || 'Adult'}"`,
       `"${r.title || ''}"`,
       `"${(r.fullName || '').replace(/"/g, '""')}"`,
       `"${r.phone || ''}"`,
