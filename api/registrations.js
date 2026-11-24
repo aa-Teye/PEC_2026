@@ -79,6 +79,8 @@ export default async function handler(req, res) {
         location = '',
         invitedBy = '',
         needsTransport = 'no',
+        attendeeType = 'Adult',
+        guardianName = '',
         ticketCode
       } = data;
 
