@@ -939,6 +939,9 @@ export default function Admin() {
                         {reg.title ? `${reg.title} ` : ''}{reg.fullName}
                         {reg.attendeeType === 'Child' && (
                           <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-sky-300 bg-sky-500/10 border border-sky-500/30 px-1.5 py-0.5 rounded-full shrink-0">
+                            <Baby size={9} /> Child{reg.ageGroup ? ` • ${reg.ageGroup}` : ''}
+                          </span>
+                        )}
                       </div>
                       {reg.email && <div className="text-[10px] text-stone-400">{reg.email}</div>}
                     </td>
