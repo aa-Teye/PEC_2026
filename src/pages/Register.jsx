@@ -297,6 +297,8 @@ export default function Register() {
                   {TITLES.map(t => (
                     <option key={t.val} value={t.val} className="bg-[#120306] text-white">
                       {t.label}
+                    </option>
+                  ))}
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">Full Name *</label>
               <input
                 type="text"
