@@ -397,6 +397,8 @@ export async function searchAttendees({ term, dayLabel = '' }) {
       title: r.title,
       phone: r.phone,
       memberStatus: r.memberStatus,
+      attendeeType: r.attendeeType || 'Adult',
+      guardianName: r.guardianName,
       checkedInToday: localAttLogs.some(l => l.ticket_code === r.ticketCode && l.day_label === dayLabel)
     }));
 }
