@@ -898,6 +898,8 @@ export default function Admin() {
             >
               <option value="ALL">Adults & Children</option>
               <option value="Adult">Adults Only</option>
+              <option value="Child">Children Only</option>
+            </select>
           </div>
         </div>
 
