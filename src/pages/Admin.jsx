@@ -238,6 +238,7 @@ export default function Admin() {
     const matchStatus = statusFilter === 'ALL' || r.memberStatus === statusFilter;
     const matchTransport = transportFilter === 'ALL' || r.needsTransport === transportFilter;
     const matchFirstTimer = firstTimerFilter === 'ALL' || r.firstTimer === firstTimerFilter;
+    const matchType = typeFilter === 'ALL' || (r.attendeeType || 'Adult') === typeFilter;
 
     return matchSearch && matchStatus && matchTransport && matchFirstTimer;
   });
