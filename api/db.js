@@ -75,6 +75,8 @@ export async function initDb() {
     await sql`
       ALTER TABLE pec_registrations ADD COLUMN IF NOT EXISTS attendee_type VARCHAR(32) DEFAULT 'Adult';
     `;
+    await sql`
+      ALTER TABLE pec_registrations ADD COLUMN IF NOT EXISTS guardian_name VARCHAR(255);
     return true;
   } catch (err) {
     console.error("Error initializing Neon database schema:", err);
