@@ -290,6 +290,8 @@ export default function Register() {
               <div>
                 <label className="block text-[11px] font-semibold text-stone-300 mb-1">Title</label>
                 <select
+                  value={form.title}
+                  onChange={e => setForm({ ...form, title: e.target.value })}
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">Full Name *</label>
               <input
                 type="text"
