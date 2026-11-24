@@ -148,7 +148,8 @@ export default async function handler(req, res) {
           ) VALUES (
             ${code}, ${title}, ${cleanName}, ${phone}, ${email}, ${gender}, ${ageGroup},
             ${memberStatus}, ${firstTimer}, ${referral}, ${attendanceDaysStr},
-            ${attendanceMode}, ${prayerRequest}, ${location}, ${invitedBy}, ${needsTransport}, FALSE
+            ${attendanceMode}, ${prayerRequest}, ${location}, ${invitedBy}, ${needsTransport}, FALSE,
+            ${attendeeType}, ${guardianName}
           )
           RETURNING *;
         `;
