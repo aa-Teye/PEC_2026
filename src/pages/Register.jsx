@@ -275,8 +275,8 @@ export default function Register() {
                   className={`py-2.5 px-3 flex items-center justify-center gap-1.5 text-xs rounded-xl border transition-all font-bold ${
                     form.attendeeType === opt.val
                       ? 'bg-amber-500 text-black border-amber-400'
-                  <option key={t.val} value={t.val} className="bg-[#120306] text-white">
-                    {t.label}
+                      : 'bg-black/30 border-white/10 text-stone-300'
+                  }`}
                   </option>
                 ))}
               </select>
