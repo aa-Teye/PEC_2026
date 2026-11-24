@@ -272,6 +272,8 @@ export default function Attendance() {
                       {(c.fullName || 'D')[0]}
                     </div>
                     <div className="min-w-0">
+                      <p className="font-bold text-white text-xs leading-tight truncate flex items-center gap-1.5">
+                        {c.title ? `${c.title} ` : ''}{c.fullName}
                       <p className="font-bold text-white text-xs leading-tight truncate">{c.title ? `${c.title} ` : ''}{c.fullName}</p>
                       <p className="text-[10px] text-stone-400 font-mono">{c.phone} • <span className="text-amber-400">{c.ticketCode}</span></p>
                     </div>
