@@ -283,6 +283,8 @@ export default function Register() {
                 </button>
               ))}
             </div>
+          </div>
+
             <div className="col-span-2">
               <label className="block text-[11px] font-semibold text-stone-300 mb-1">Full Name *</label>
               <input
