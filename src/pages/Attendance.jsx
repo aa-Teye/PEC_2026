@@ -304,7 +304,7 @@ export default function Attendance() {
                 <div className="flex items-center gap-2.5">
                   <User size={18} className="text-amber-300 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-bold text-sm text-white">
+                    <p className="font-bold text-sm text-white flex items-center gap-1.5">
                       {selectedCandidate.title ? `${selectedCandidate.title} ` : ''}{selectedCandidate.fullName}
                     </p>
                     <p className="text-xs text-stone-300 mt-0.5">{selectedCandidate.phone} &bull; {selectedCandidate.memberStatus}</p>
